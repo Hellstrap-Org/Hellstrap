@@ -3,7 +3,7 @@
 **Hellstrap is a powerful, feature-rich fork of [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap), designed to supercharge your **Roblox** experience with cutting-edge optimizations, enhanced performance, and exclusive features.**
 
 <p align="center">
-   <img src="https://github.com/midaskira/Hellstrap/blob/main/Images/Hellstrap-full-light.png">
+   <img src="https://github.com/Hellstrap-Org/Hellstrap/blob/main/Images/Hellstrap-full-light.png">
 </p>
 
 <p align="center">
@@ -15,16 +15,16 @@
 > [!CAUTION] > The official download sources for Hellstrap are this GitHub repository and [Hellstrap.com](https://Hellstrap.com). Any other sites claiming to provide downloads are **not affiliated** with us.
 
 <p align="center">
-  <a href="https://github.com/midaskira/Hellstrap/blob/main/LICENSE.md">
+  <a href="https://github.com/Hellstrap-Org/Hellstrap/blob/main/LICENSE.md">
     <img src="https://img.shields.io/github/license/midaskira/Hellstrap?&color=FFC000&border_radius=3" alt="License">
   </a>
-  <a href="https://github.com/midaskira/Hellstrap/releases">
+  <a href="https://github.com/Hellstrap-Org/Hellstrap/releases">
     <img src="https://img.shields.io/github/downloads/midaskira/Hellstrap/total?color=981bfe&label=Downloads&border_radius=3" alt="Downloads">
   </a>
-  <a href="https://github.com/midaskira/Hellstrap/releases">
+  <a href="https://github.com/Hellstrap-Org/Hellstrap/releases">
     <img src="https://img.shields.io/github/v/release/midaskira/Hellstrap?color=7a39fb&label=Latest&border_radius=3" alt="Latest Release">
   </a>
-  <a href="https://github.com/midaskira/">
+  <a href="https://github.com/Hellstrap-Org/">
     <img src="https://img.shields.io/github/stars/midaskira/Hellstrap?color=FFD700&label=Stars&border_radius=3" alt="GitHub Stars">
   </a>
 </p>
@@ -54,9 +54,9 @@
 ---
 
 ## 🌟 Join the Hellstrap Community!
-- 📂 [Download Hellstrap](https://github.com/midaskira/Hellstrap/releases)
+- 📂 [Download Hellstrap](https://github.com/Hellstrap-Org/Hellstrap/releases)
 - 💬 [Join our Discord](https://discord.gg/UuxcfqPNnA)
-- ⭐ [Star Hellstrap on GitHub](https://github.com/midaskira/Hellstrap/stargazers)
+- ⭐ [Star Hellstrap on GitHub](https://github.com/Hellstrap-Org/Hellstrap/stargazers)
 
 ---
 
@@ -103,7 +103,7 @@
 ---
 
 ## 🛠️ Installation Guide
-1. **[Download the latest version](https://github.com/midaskira/Hellstrap/releases)**  
+1. **[Download the latest version](https://github.com/Hellstrap-Org/Hellstrap/releases)**  
 2. Run the installer and configure your preferences  
 3. Enjoy an enhanced, optimized Roblox experience!  
 
@@ -111,7 +111,7 @@
 
 ## 🐞 Found a Bug? Need Help?
 💬 **[Join our Discord](https://discord.gg/UuxcfqPNnA)** for support.  
-📌 **[Submit an issue](https://github.com/midaskira/Hellstrap/issues)** on GitHub.
+📌 **[Submit an issue](https://github.com/Hellstrap-Org/Hellstrap/issues)** on GitHub.
 
 ---
 
