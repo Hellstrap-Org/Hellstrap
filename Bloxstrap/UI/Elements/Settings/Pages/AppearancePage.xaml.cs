@@ -1,8 +1,8 @@
-﻿using Bloxstrap.UI.ViewModels.Settings;
+﻿using Hellstrap.UI.ViewModels.Settings;
 
 using System.Windows.Controls;
 
-namespace Bloxstrap.UI.Elements.Settings.Pages
+namespace Hellstrap.UI.Elements.Settings.Pages
 {
     /// <summary>
     /// Interaction logic for AppearancePage.xaml
@@ -24,6 +24,11 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
 
             viewModel.OnPropertyChanged(nameof(viewModel.SelectedCustomTheme));
             viewModel.OnPropertyChanged(nameof(viewModel.SelectedCustomThemeName));
+        }
+
+        private void ComboBox_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+
         }
     }
 }

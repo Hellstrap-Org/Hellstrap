@@ -1,10 +1,10 @@
 ﻿using System.Windows;
 using System.Windows.Input;
 
-using Bloxstrap.UI.ViewModels.Settings;
+using Hellstrap.UI.ViewModels.Settings;
 using Wpf.Ui.Mvvm.Contracts;
 
-namespace Bloxstrap.UI.Elements.Settings.Pages
+namespace Hellstrap.UI.Elements.Settings.Pages
 {
     /// <summary>
     /// Interaction logic for FastFlagsPage.xaml
@@ -31,14 +31,12 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
             DataContext = _viewModel;
         }
 
+
         private void OpenFlagEditor(object? sender, EventArgs e)
         {
             if (Window.GetWindow(this) is INavigationWindow window)
             {
-                if (App.State.Prop.ShowFFlagEditorWarning)
-                    window.Navigate(typeof(FastFlagEditorWarningPage));
-                else
-                    window.Navigate(typeof(FastFlagEditorPage));
+               window.Navigate(typeof(FastFlagEditorPage));
             }
         }
 
@@ -58,5 +56,20 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
         private void ValidateInt32(object sender, TextCompositionEventArgs e) => e.Handled = e.Text != "-" && !Int32.TryParse(e.Text, out int _);
         
         private void ValidateUInt32(object sender, TextCompositionEventArgs e) => e.Handled = !UInt32.TryParse(e.Text, out uint _);
+
+        private void ToggleSwitch_Checked(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void ToggleSwitch_Checked_1(object sender, RoutedEventArgs e)
+        {
+
+        }
+
+        private void OptionControl_Loaded(object sender, RoutedEventArgs e)
+        {
+
+        }
     }
 }

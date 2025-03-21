@@ -1,4 +1,6 @@
-﻿namespace Bloxstrap
+﻿using Hellstrap;
+
+namespace Hellstrap
 {
     // https://stackoverflow.com/a/53873141/11852173
 
@@ -53,11 +55,11 @@
                 if (NoWriteMode)
                     return;
 
-                WriteLine(LOG_IDENT, $"Failed to initialize because Bloxstrap cannot write to {directory}");
+                WriteLine(LOG_IDENT, $"Failed to initialize because Hellstrap cannot write to {directory}");
 
                 Frontend.ShowMessageBox(
-                    String.Format(Strings.Logger_NoWriteMode, directory), 
-                    System.Windows.MessageBoxImage.Warning, 
+                    String.Format(Strings.Logger_NoWriteMode, directory),
+                    System.Windows.MessageBoxImage.Warning,
                     System.Windows.MessageBoxButton.OK
                 );
 
@@ -65,7 +67,7 @@
 
                 return;
             }
-            
+
 
             Initialized = true;
 
@@ -88,7 +90,7 @@
 
                     try
                     {
-                       log.Delete();
+                        log.Delete();
                     }
                     catch (Exception ex)
                     {

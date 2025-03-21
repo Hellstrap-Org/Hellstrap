@@ -1,9 +1,10 @@
 ﻿using System.Windows;
 
-using Bloxstrap.UI.Elements.Bootstrapper;
-using Bloxstrap.UI.Elements.Dialogs;
+using Hellstrap.UI.Elements.Bootstrapper;
+using Hellstrap.UI.Elements.Dialogs;
+using Hellstrap;
 
-namespace Bloxstrap.UI
+namespace Hellstrap.UI
 {
     static class Frontend
     {
@@ -30,7 +31,7 @@ namespace Bloxstrap.UI
             string info = String.Format(
                 Strings.Dialog_PlayerError_HelpInformation,
                 $"https://github.com/{App.ProjectRepository}/wiki/Roblox-crashes-or-does-not-launch",
-                $"https://github.com/{App.ProjectRepository}/wiki/Switching-between-Roblox-and-Bloxstrap"
+                $"https://github.com/{App.ProjectRepository}/wiki/Switching-between-Roblox-and-Hellstrap"
             );
 
             ShowMessageBox($"{topLine}\n\n{info}", MessageBoxImage.Error);
@@ -67,7 +68,7 @@ namespace Bloxstrap.UI
             try
             {
                 if (App.Settings.Prop.SelectedCustomTheme == null)
-                    throw new CustomThemeException("CustomTheme.Errors.NoThemeSelected");
+                    throw new Exception("No custom theme selected");
 
                 CustomDialog dialog = new CustomDialog();
                 dialog.ApplyCustomTheme(App.Settings.Prop.SelectedCustomTheme);
@@ -78,9 +79,9 @@ namespace Bloxstrap.UI
                 App.Logger.WriteException(LOG_IDENT, ex);
 
                 if (!App.LaunchSettings.QuietFlag.Active)
-                    ShowMessageBox(string.Format(Strings.CustomTheme_Errors_SetupFailed, ex.Message, "Bloxstrap"), MessageBoxImage.Error); // NOTE: Bloxstrap is the theme name
+                    Frontend.ShowMessageBox($"Failed to setup custom bootstrapper: {ex.Message}.\nDefaulting Theme.", MessageBoxImage.Error);
 
-                return GetBootstrapperDialog(BootstrapperStyle.FluentDialog);
+                return GetBootstrapperDialog(BootstrapperStyle.FluentAeroDialog);
             }
         }
 
@@ -109,18 +110,6 @@ namespace Bloxstrap.UI
                 messagebox.ShowDialog();
                 return messagebox.Result;
             }));
-        }
-
-        public static void ShowBalloonTip(string title, string message, System.Windows.Forms.ToolTipIcon icon = System.Windows.Forms.ToolTipIcon.None, int timeout = 5)
-        {
-            var notifyIcon = new System.Windows.Forms.NotifyIcon
-            {
-                Icon = Properties.Resources.IconBloxstrap,
-                Text = App.ProjectName,
-                Visible = true
-            };
-
-            notifyIcon.ShowBalloonTip(timeout, title, message, icon);
         }
     }
 }

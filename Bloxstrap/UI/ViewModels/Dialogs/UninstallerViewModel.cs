@@ -1,15 +1,16 @@
 ﻿using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-using Bloxstrap.Resources;
+using Hellstrap.Resources;
+using Hellstrap;
 
-namespace Bloxstrap.UI.ViewModels.Dialogs
+namespace Hellstrap.UI.ViewModels.Dialogs
 {
     public class UninstallerViewModel
     {
         public string Text => String.Format(
-            Strings.Uninstaller_Text, 
-            "https://github.com/bloxstraplabs/bloxstrap/wiki/Roblox-crashes-or-does-not-launch",
+            Strings.Uninstaller_Text,
+            "https://github.com/Hellstraplabs/Hellstrap/wiki/Roblox-crashes-or-does-not-launch",
             Paths.Base
         );
 

@@ -5,7 +5,7 @@ using Microsoft.Win32;
 
 using CommunityToolkit.Mvvm.Input;
 
-namespace Bloxstrap.UI.ViewModels.Settings
+namespace Hellstrap.UI.ViewModels.Settings
 {
     public class IntegrationsViewModel : NotifyPropertyChangedViewModel
     {
@@ -65,6 +65,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
         public bool ActivityTrackingEnabled
         {
             get => App.Settings.Prop.EnableActivityTracking;
+
             set
             {
                 App.Settings.Prop.EnableActivityTracking = value;
@@ -88,6 +89,15 @@ namespace Bloxstrap.UI.ViewModels.Settings
         {
             get => App.Settings.Prop.ShowServerDetails;
             set => App.Settings.Prop.ShowServerDetails = value;
+        }
+
+        public bool PlayerLogsEnabled
+        {
+            get => App.FastFlags.GetPreset("Players.LogLevel") == "trace"; // we r using this to determine if its enabled
+            set {
+                App.FastFlags.SetPreset("Players.LogLevel", value ? "trace" : null);
+                App.FastFlags.SetPreset("Players.LogPattern", value ? "ExpChat/mountClientApp" : null);
+            }
         }
 
         public bool DiscordActivityEnabled
@@ -123,12 +133,6 @@ namespace Bloxstrap.UI.ViewModels.Settings
         {
             get => App.Settings.Prop.UseDisableAppPatch;
             set => App.Settings.Prop.UseDisableAppPatch = value;
-        }
-
-        public bool MultiInstanceLaunchingEnabled
-        {
-            get => App.Settings.Prop.MultiInstanceLaunching;
-            set => App.Settings.Prop.MultiInstanceLaunching = value;
         }
 
         public ObservableCollection<CustomIntegration> CustomIntegrations

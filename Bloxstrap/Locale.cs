@@ -1,46 +1,33 @@
-﻿using System.Windows;
+﻿using System.Globalization;
+using System.Linq;
+using System.Threading;
+using System.Windows;
+using System.Collections.Generic;
 
-namespace Bloxstrap
+namespace Hellstrap
 {
     internal static class Locale
     {
+        public const string DefaultLocale = "nil";
+        private static readonly HashSet<string> _rtlLocales = new() { "ar", "he", "fa" };
+
         public static CultureInfo CurrentCulture { get; private set; } = CultureInfo.InvariantCulture;
 
         public static bool RightToLeft { get; private set; } = false;
 
-        private static readonly List<string> _rtlLocales = new() { "ar", "he", "fa" };
-
         public static readonly Dictionary<string, string> SupportedLocales = new()
         {
-            { "nil", Strings.Common_SystemDefault },
-            { "en", "English" },
-            { "en-US", "English (United States)" },
-#if QA_BUILD
-            { "sq", "Albanian" }, // Albanian (TODO: translate string)
-#endif
+            { DefaultLocale, Strings.Common_SystemDefault },
+            { "en-US", "English (Recommended)" },
             { "ar", "العربية" }, // Arabic
             { "bg", "Български" }, // Bulgarian
-#if QA_BUILD
-            { "bn", "বাংলা" }, // Bengali
-            { "bs", "Bosanski" }, // Bosnian
-#endif
             { "cs", "Čeština" }, // Czech
             { "de", "Deutsch" }, // German
-#if QA_BUILD
-            { "da", "Dansk" }, // Danish
-#endif
             { "es-ES", "Español" }, // Spanish
-#if QA_BUILD
-            { "el", "Ελληνικά" }, // Greek
-#endif
             { "fa", "فارسی" }, // Persian
             { "fi", "Suomi" }, // Finnish
             { "fil", "Filipino" }, // Filipino
             { "fr", "Français" }, // French
-#if QA_BUILD
-            { "he", "עברית‎" }, // Hebrew
-            { "hi", "Hindi (Latin)" }, // Hindi
-#endif
             { "hr", "Hrvatski" }, // Croatian
             { "hu", "Magyar" }, // Hungarian
             { "id", "Bahasa Indonesia" }, // Indonesian
@@ -50,11 +37,8 @@ namespace Bloxstrap
             { "lt", "Lietuvių" }, // Lithuanian
             { "ms", "Malay" }, // Malay
             { "nl", "Nederlands" }, // Dutch
-#if QA_BUILD
-            { "no", "Bokmål" }, // Norwegian
-#endif
             { "pl", "Polski" }, // Polish
-            { "pt-BR", "Português (Brasil)" }, // Portuguese, Brazilian
+            { "pt-BR", "Português (Brasil)" }, // Portuguese (Brazilian)
             { "ro", "Română" }, // Romanian
             { "ru", "Русский" }, // Russian
             { "sv-SE", "Svenska" }, // Swedish
@@ -63,50 +47,62 @@ namespace Bloxstrap
             { "uk", "Українська" }, // Ukrainian
             { "vi", "Tiếng Việt" }, // Vietnamese
             { "zh-CN", "中文 (简体)" }, // Chinese Simplified
-#if QA_BUILD
-            { "zh-HK", "中文 (廣東話)" }, // Chinese Traditional, Hong Kong
-#endif
             { "zh-TW", "中文 (繁體)" } // Chinese Traditional
         };
 
-        public static string GetIdentifierFromName(string language) => SupportedLocales.FirstOrDefault(x => x.Value == language).Key ?? "nil";
+        public static string GetIdentifierFromName(string language) =>
+            SupportedLocales.FirstOrDefault(x => x.Value == language).Key ?? DefaultLocale;
 
         public static List<string> GetLanguages()
         {
-            var languages = new List<string>();
-            
-            languages.AddRange(SupportedLocales.Values.Take(3));
+            var languages = SupportedLocales.Values.Take(3).ToList();
             languages.AddRange(SupportedLocales.Values.Where(x => !languages.Contains(x)).OrderBy(x => x));
-            languages[0] = Strings.Common_SystemDefault; // set again for any locale changes
 
+            languages[0] = Strings.Common_SystemDefault; // set again for any locale changes
             return languages;
         }
 
         public static void Set(string identifier)
         {
             if (!SupportedLocales.ContainsKey(identifier))
-                identifier = "nil";
+                identifier = DefaultLocale;
 
-            if (identifier == "nil")
+            if (identifier == DefaultLocale)
             {
                 CurrentCulture = Thread.CurrentThread.CurrentUICulture;
             }
             else
             {
-                CurrentCulture = new CultureInfo(identifier);
+                try
+                {
+                    CurrentCulture = new CultureInfo(identifier);
+                }
+                catch (CultureNotFoundException)
+                {
+                    // Handle unsupported culture identifier (could log or fall back to default)
+                    CurrentCulture = CultureInfo.InvariantCulture;
+                }
 
+                // Update culture settings for the current thread
                 CultureInfo.DefaultThreadCurrentUICulture = CurrentCulture;
                 Thread.CurrentThread.CurrentUICulture = CurrentCulture;
             }
 
-            RightToLeft = _rtlLocales.Any(CurrentCulture.Name.StartsWith);
+            RightToLeft = IsRightToLeft(CurrentCulture.Name);
+        }
+
+        private static bool IsRightToLeft(string cultureName)
+        {
+            // Extract the language code (first two characters) to check for RTL support
+            string languageCode = cultureName.Substring(0, 2);
+            return _rtlLocales.Contains(languageCode);
         }
 
         public static void Initialize()
         {
-            Set("nil");
+            Set(DefaultLocale);
 
-            // https://supportcenter.devexpress.com/ticket/details/t905790/is-there-a-way-to-set-right-to-left-mode-in-wpf-for-the-whole-application
+            // Setting FlowDirection for RTL languages
             EventManager.RegisterClassHandler(typeof(Window), FrameworkElement.LoadedEvent, new RoutedEventHandler((sender, _) =>
             {
                 var window = (Window)sender;
@@ -123,10 +119,10 @@ namespace Bloxstrap
                     window.FontFamily = new System.Windows.Media.FontFamily(new Uri("pack://application:,,,/Resources/Fonts/"), "./#Noto Sans Thai");
                 }
 
-#if QA_BUILD
+
                 window.BorderBrush = System.Windows.Media.Brushes.Red;
                 window.BorderThickness = new Thickness(4);
-#endif
+
             }));
         }
     }

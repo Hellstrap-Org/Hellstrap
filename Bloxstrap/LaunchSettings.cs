@@ -1,4 +1,4 @@
-﻿using Bloxstrap.Enums;
+﻿using Hellstrap.Enums;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,39 +8,33 @@ using System.Threading.Tasks;
 using System.Web;
 using System.Windows;
 
-namespace Bloxstrap
+namespace Hellstrap
 {
     public class LaunchSettings
     {
-        public LaunchFlag MenuFlag                  { get; } = new("preferences,menu,settings");
+        public LaunchFlag MenuFlag      { get; } = new("preferences,menu,settings");
 
-        public LaunchFlag WatcherFlag               { get; } = new("watcher");
+        public LaunchFlag WatcherFlag   { get; } = new("watcher");
 
-        public LaunchFlag MultiInstanceWatcherFlag  { get; } = new("multiinstancewatcher");
+        public LaunchFlag QuietFlag     { get; } = new("quiet");
 
-        public LaunchFlag BackgroundUpdaterFlag     { get; } = new("backgroundupdater");
+        public LaunchFlag UninstallFlag { get; } = new("uninstall");
 
-        public LaunchFlag QuietFlag                 { get; } = new("quiet");
+        public LaunchFlag InstallFlag { get; } = new("install");
 
-        public LaunchFlag UninstallFlag             { get; } = new("uninstall");
-
-        public LaunchFlag NoLaunchFlag              { get; } = new("nolaunch");
+        public LaunchFlag NoLaunchFlag  { get; } = new("nolaunch");
         
-        public LaunchFlag TestModeFlag              { get; } = new("testmode");
+        public LaunchFlag TestModeFlag  { get; } = new("testmode");
 
-        public LaunchFlag NoGPUFlag                 { get; } = new("nogpu");
+        public LaunchFlag NoGPUFlag     { get; } = new("nogpu");
 
-        public LaunchFlag UpgradeFlag               { get; } = new("upgrade");
+        public LaunchFlag UpgradeFlag   { get; } = new("upgrade");
         
-        public LaunchFlag PlayerFlag                { get; } = new("player");
+        public LaunchFlag PlayerFlag    { get; } = new("player");
         
-        public LaunchFlag StudioFlag                { get; } = new("studio");
+        public LaunchFlag StudioFlag    { get; } = new("studio");
 
-        public LaunchFlag VersionFlag               { get; } = new("version");
-
-        public LaunchFlag ChannelFlag               { get; } = new("channel");
-
-        public LaunchFlag ForceFlag                 { get; } = new("force");
+        public LaunchFlag BloxshadeFlag { get; } = new("bloxshade");
 
 #if DEBUG
         public bool BypassUpdateCheck => true;
@@ -57,17 +51,17 @@ namespace Bloxstrap
         /// </summary>
         public string[] Args { get; private set; }
 
+        private readonly Dictionary<string, LaunchFlag> _flagMap = new();
+
         public LaunchSettings(string[] args)
         {
-            const string LOG_IDENT = "LaunchSettings::LaunchSettings";
+            const string LOG_IDENT = "LaunchSettings";
 
 #if DEBUG
             App.Logger.WriteLine(LOG_IDENT, $"Launched with arguments: {string.Join(' ', args)}");
 #endif
 
             Args = args;
-
-            Dictionary<string, LaunchFlag> flagMap = new();
 
             // build flag map
             foreach (var prop in this.GetType().GetProperties())
@@ -79,7 +73,7 @@ namespace Bloxstrap
                     continue;
 
                 foreach (string identifier in flag.Identifiers.Split(','))
-                    flagMap.Add(identifier, flag);
+                    _flagMap.Add(identifier, flag);
             }
 
             int startIdx = 0;
@@ -97,13 +91,6 @@ namespace Bloxstrap
                     RobloxLaunchArgs = arg;
                     startIdx = 1;
                 }
-                else if (arg.StartsWith("version-"))
-                {
-                    App.Logger.WriteLine(LOG_IDENT, "Got version argument");
-                    VersionFlag.Active = true;
-                    VersionFlag.Data = arg;
-                    startIdx = 1;
-                }
             }
 
             // parse
@@ -119,15 +106,9 @@ namespace Bloxstrap
 
                 string identifier = arg[1..];
 
-                if (!flagMap.TryGetValue(identifier, out LaunchFlag? flag) || flag is null)
+                if (!_flagMap.TryGetValue(identifier, out LaunchFlag? flag) || flag is null)
                 {
                     App.Logger.WriteLine(LOG_IDENT, $"Unknown argument: {identifier}");
-                    continue;
-                }
-
-                if (flag.Active)
-                {
-                    App.Logger.WriteLine(LOG_IDENT, $"Tried to set {identifier} flag twice");
                     continue;
                 }
 
@@ -144,9 +125,6 @@ namespace Bloxstrap
                     App.Logger.WriteLine(LOG_IDENT, $"Identifier '{identifier}' is active");
                 }
             }
-
-            if (VersionFlag.Active)
-                RobloxLaunchMode = LaunchMode.Unknown; // determine in bootstrapper
 
             if (PlayerFlag.Active)
                 ParsePlayer(PlayerFlag.Data);

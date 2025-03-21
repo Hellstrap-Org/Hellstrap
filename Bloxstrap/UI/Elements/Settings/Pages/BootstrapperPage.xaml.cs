@@ -13,9 +13,9 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-using Bloxstrap.UI.ViewModels.Settings;
+using Hellstrap.UI.ViewModels.Settings;
 
-namespace Bloxstrap.UI.Elements.Settings.Pages
+namespace Hellstrap.UI.Elements.Settings.Pages
 {
     /// <summary>
     /// Interaction logic for BehaviourPage.xaml
@@ -26,11 +26,11 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
         {
             DataContext = new BehaviourViewModel();
             InitializeComponent();
-        }
 
-        private void ToggleSwitch_Checked(object sender, RoutedEventArgs e)
-        {
-
+            if (App.State.Prop.ShowBloxshadeWarning)
+            {
+                AnselBanner.IsOpen = false;
+            }
         }
     }
 }

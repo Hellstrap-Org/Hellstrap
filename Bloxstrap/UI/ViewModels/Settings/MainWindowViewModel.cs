@@ -1,20 +1,24 @@
 ﻿using System.Windows;
 using System.Windows.Input;
-using Bloxstrap.UI.Elements.About;
+using Hellstrap.UI.Elements.About;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Bloxstrap.UI.ViewModels.Settings
+namespace Hellstrap.UI.ViewModels.Settings
 {
     public class MainWindowViewModel : NotifyPropertyChangedViewModel
     {
         public ICommand OpenAboutCommand => new RelayCommand(OpenAbout);
         
         public ICommand SaveSettingsCommand => new RelayCommand(SaveSettings);
-        
+
+        public ICommand SaveAndLaunchSettingsCommand => new RelayCommand(SaveAndLaunchSettings);
+
+
         public ICommand CloseWindowCommand => new RelayCommand(CloseWindow);
 
         public EventHandler? RequestSaveNoticeEvent;
-        
+        public EventHandler? RequestSaveLaunchNoticeEvent;
+
         public EventHandler? RequestCloseWindowEvent;
 
         public bool TestModeEnabled
@@ -22,12 +26,14 @@ namespace Bloxstrap.UI.ViewModels.Settings
             get => App.LaunchSettings.TestModeFlag.Active;
             set
             {
-                if (value)
+                if (value && !App.State.Prop.TestModeWarningShown)
                 {
                     var result = Frontend.ShowMessageBox(Strings.Menu_TestMode_Prompt, MessageBoxImage.Information, MessageBoxButton.YesNo);
 
                     if (result != MessageBoxResult.Yes)
                         return;
+
+                    App.State.Prop.TestModeWarningShown = true;
                 }
 
                 App.LaunchSettings.TestModeFlag.Active = value;
@@ -60,6 +66,12 @@ namespace Bloxstrap.UI.ViewModels.Settings
             App.PendingSettingTasks.Clear();
 
             RequestSaveNoticeEvent?.Invoke(this, EventArgs.Empty);
+        }
+        public void SaveAndLaunchSettings()
+        {
+            SaveSettings();
+            RequestSaveLaunchNoticeEvent?.Invoke(this, EventArgs.Empty);
+            LaunchHandler.LaunchRoblox(LaunchMode.Player);
         }
     }
 }

@@ -1,7 +1,7 @@
 ﻿using System.Windows;
-using Bloxstrap.Resources;
+using Hellstrap.Resources;
 
-namespace Bloxstrap.Utility
+namespace Hellstrap.Utility
 {
     internal static class Shortcut
     {

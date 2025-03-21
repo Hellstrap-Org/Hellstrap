@@ -1,10 +1,12 @@
-﻿using System;
+﻿using Hellstrap.AppData;
+using Hellstrap;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bloxstrap.AppData
+namespace Hellstrap.AppData
 {
     public class RobloxPlayerData : CommonAppData, IAppData
     {
@@ -13,11 +15,8 @@ namespace Bloxstrap.AppData
         public string BinaryType => "WindowsPlayer";
 
         public string RegistryName => "RobloxPlayer";
-
-        public override string ExecutableName => "RobloxPlayerBeta.exe";
-
-        public override AppState State => App.RobloxState.Prop.Player;
-
+        public override string ExecutableName => App.Settings.Prop.RenameClientToEuroTrucks2 ? "eurotrucks2.exe" : "RobloxPlayerBeta.exe";
+        public override AppState State => App.State.Prop.Player;
         public override IReadOnlyDictionary<string, string> PackageDirectoryMap { get; set; } = new Dictionary<string, string>()
         {
             { "RobloxApp.zip", @"" }

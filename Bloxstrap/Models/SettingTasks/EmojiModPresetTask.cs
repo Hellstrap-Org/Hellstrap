@@ -1,12 +1,12 @@
 ﻿using System.Windows;
 
-using Bloxstrap.Models.SettingTasks.Base;
+using Hellstrap.Models.SettingTasks.Base;
 
-namespace Bloxstrap.Models.SettingTasks
+namespace Hellstrap.Models.SettingTasks
 {
     public class EmojiModPresetTask : EnumBaseTask<EmojiType>
     {
-        private string _filePath => Path.Combine(Paths.Modifications, @"content\fonts\TwemojiMozilla.ttf");
+        private string _filePath => Path.Combine(Paths.Mods, @"content\fonts\TwemojiMozilla.ttf");
 
         private IEnumerable<KeyValuePair<EmojiType, string>>? QueryCurrentValue()
         {

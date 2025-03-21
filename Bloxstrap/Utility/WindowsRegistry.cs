@@ -1,11 +1,13 @@
-﻿using Microsoft.Win32;
+﻿using Hellstrap;
+using Microsoft.Win32;
+using System.CodeDom;
 
-namespace Bloxstrap.Utility
+namespace Hellstrap.Utility
 {
     static class WindowsRegistry
     {
         private const string RobloxPlaceKey = "Roblox.Place";
-        
+
         public static readonly List<RegistryKey> Roots = new() { Registry.CurrentUser, Registry.LocalMachine };
 
         public static void RegisterProtocol(string key, string name, string handler, string handlerParam = "%1")
@@ -30,7 +32,7 @@ namespace Bloxstrap.Utility
         }
 
         /// <summary>
-        /// Registers Roblox Player protocols for Bloxstrap
+        /// Registers Roblox Player protocols for Hellstrap
         /// </summary>
         public static void RegisterPlayer() => RegisterPlayer(Paths.Application, "-player \"%1\"");
 
@@ -41,7 +43,7 @@ namespace Bloxstrap.Utility
         }
 
         /// <summary>
-        /// Registers all Roblox Studio classes for Bloxstrap
+        /// Registers all Roblox Studio classes for Hellstrap
         /// </summary>
         public static void RegisterStudio()
         {
@@ -106,6 +108,24 @@ namespace Bloxstrap.Utility
 
             if (uriKey.GetValue("") as string != RobloxPlaceKey)
                 uriKey.SetValueSafe("", RobloxPlaceKey);
+        }
+
+        public static void RegisterApis()
+        {
+            static void Register()
+            {
+                using var apisKey = Registry.CurrentUser.CreateSubKey(App.ApisKey);
+                apisKey.SetValueSafe("ApplicationPath", Paths.Application);
+                apisKey.SetValueSafe("InstallationPath", Paths.Base);
+            };
+
+            var currentApis = Registry.CurrentUser.OpenSubKey(App.ApisKey, false);
+
+            if (currentApis == null)
+            {
+                Register();
+            };
+            currentApis?.Dispose();
         }
 
         public static void Unregister(string key)

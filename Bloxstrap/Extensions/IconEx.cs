@@ -2,7 +2,7 @@
 using System.Windows.Media.Imaging;
 using System.Windows.Media;
 
-namespace Bloxstrap.Extensions
+namespace Hellstrap.Extensions
 {
     public static class IconEx
     {
@@ -23,7 +23,7 @@ namespace Bloxstrap.Extensions
                 {
                     App.Logger.WriteException("IconEx::GetImageSource", ex);
                     Frontend.ShowMessageBox(String.Format(Strings.Dialog_IconLoadFailed, ex.Message));
-                    return BootstrapperIcon.IconBloxstrap.GetIcon().GetImageSource(false);
+                    return BootstrapperIcon.IconHellstrap.GetIcon().GetImageSource(false);
                 }
             }
             else

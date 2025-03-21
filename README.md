@@ -1,89 +1,125 @@
-> [!CAUTION]
-> The only official places to download Bloxstrap are this GitHub repository and [bloxstraplabs.com](https://bloxstraplabs.com). Any other websites offering downloads or claiming to be us are not controlled by us.
+# **Hellstrap - The Ultimate Bloxstrap Fork for Roblox Optimization**
+
+**Hellstrap is a powerful, feature-rich fork of [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap), designed to supercharge your **Roblox** experience with cutting-edge optimizations, enhanced performance, and exclusive features.**
 
 <p align="center">
-    <img src="https://github.com/bloxstraplabs/bloxstrap/raw/main/Images/Bloxstrap-full-dark.png#gh-dark-mode-only" width="420">
-    <img src="https://github.com/bloxstraplabs/bloxstrap/raw/main/Images/Bloxstrap-full-light.png#gh-light-mode-only" width="420">
+   <img src="https://github.com/midaskira/Hellstrap/blob/main/Images/Hellstrap-full-light.png">
 </p>
 
-<div align="center">
+<p align="center">
 
-[![License][shield-repo-license]][repo-license]
-[![GitHub Workflow Status][shield-repo-workflow]][repo-actions]
-[![Crowdin][shield-crowdin-status]][crowdin-project]
-[![Downloads][shield-repo-releases]][repo-releases]
-[![Version][shield-repo-latest]][repo-latest]
-[![Discord][shield-discord-server]][discord-invite]
-[![lol][shield-tenor-meme]][tenor-gif]
+**⭐ Love Hellstrap? Show your support by starring the project! It means a lot! ⭐**
 
-</div>
+</p>
 
-----
+> [!CAUTION] > The official download sources for Hellstrap are this GitHub repository and [Hellstrap.com](https://Hellstrap.com). Any other sites claiming to provide downloads are **not affiliated** with us.
 
-Bloxstrap is a third-party replacement for the standard Roblox bootstrapper, providing additional useful features and improvements.
+<p align="center">
+  <a href="https://github.com/midaskira/Hellstrap/blob/main/LICENSE.md">
+    <img src="https://img.shields.io/github/license/midaskira/Hellstrap?&color=FFC000&border_radius=3" alt="License">
+  </a>
+  <a href="https://github.com/midaskira/Hellstrap/releases">
+    <img src="https://img.shields.io/github/downloads/midaskira/Hellstrap/total?color=981bfe&label=Downloads&border_radius=3" alt="Downloads">
+  </a>
+  <a href="https://github.com/midaskira/Hellstrap/releases">
+    <img src="https://img.shields.io/github/v/release/midaskira/Hellstrap?color=7a39fb&label=Latest&border_radius=3" alt="Latest Release">
+  </a>
+  <a href="https://github.com/midaskira/">
+    <img src="https://img.shields.io/github/stars/midaskira/Hellstrap?color=FFD700&label=Stars&border_radius=3" alt="GitHub Stars">
+  </a>
+</p>
 
-Running into a problem or need help with something? [Check out the Wiki](https://github.com/bloxstraplabs/bloxstrap/wiki). If you can't find anything, or would like to suggest something, please [submit an issue](https://github.com/bloxstraplabs/bloxstrap/issues).
+<p align="center">
+  <a href="https://discord.gg/UuxcfqPNnA">
+    <img src="https://img.shields.io/discord/1333479052853383199?logo=discord&logoColor=white&label=Discord&color=4d3dff&border_radius=3" alt="Join Discord">
+  </a>
+  <a href="https://opentip.kaspersky.com/87EBA70EE3385DE38C2A705499B4899E4CEF6C6734C83632C4A5D6C33C84CD88/results?tab=upload">
+    <img src="https://img.shields.io/badge/Virus%20Free-✔️-00B140?&border_radius=3" alt="Virus Free">
+  </a>
+</p>
 
-Bloxstrap is only supported for PCs running Windows.
+---
 
-## Frequently Asked Questions
+## 🚀 Key Features
+- 🔥 **Enhanced functionality** beyond Bloxstrap  
+- ⚡ **Optimized performance** for smoother gameplay  
+- 🎮 **Multi-instance support** – run multiple Roblox clients simultaneously  
+- 📜 **Advanced logging & tracking** for improved stability  
+- 🛠️ **Bug fixes & enhanced reliability**  
+- 🔄 **Cross-Game Teleport** – Fixes Error 773 by enabling cross-game teleportation  
+- 📡 **Channels Manager** – Seamlessly switch between Production, Live, and ZLive channels  
+- 🚀 **Hardware Acceleration Toggle** – Disable it for better low-end performance  
+- 🎨 **UI Enhancements** – Improved readability, themes, and shortcut redesigns  
 
-**Q: Is this malware?**
+---
 
-**A:** No. The source code here is viewable to all, and it'd be impossible for us to slip anything malicious into the downloads without anyone noticing. Just be sure you're downloading it from an official source. The only two official sources are this GitHub repository and [bloxstraplabs.com](https://bloxstraplabs.com).
+## 🌟 Join the Hellstrap Community!
+- 📂 [Download Hellstrap](https://github.com/midaskira/Hellstrap/releases)
+- 💬 [Join our Discord](https://discord.gg/UuxcfqPNnA)
+- ⭐ [Star Hellstrap on GitHub](https://github.com/midaskira/Hellstrap/stargazers)
 
-**Q: Can using this get me banned?**
+---
 
-**A:** No, it shouldn't. Bloxstrap doesn't interact with the Roblox client in the same way that exploits do. [Read more about that here.](https://github.com/bloxstraplabs/bloxstrap/wiki/Why-it's-not-reasonably-possible-for-you-to-be-banned-by-Bloxstrap)
+## ✨ Detailed Features & Enhancements
 
-**Q: Why was multi-instance launching removed?**
+### 🔹 **Integrations**
+- **Player Logs** – Monitor player activity in real time  
+- **Message Logs** – Keep track of in-game chat for security  
 
-**A:** It was removed starting with v2.6.0 for the [reasons stated here](https://github.com/bloxstraplabs/bloxstrap/wiki/Plans-to-remove-multi%E2%80%90instance-launching-from-Bloxstrap). It may be added back in the future when there are less issues with doing so.
+### 🔹 **Fast Flags**
+- **Backup & restore flags** instantly  
+- **No more editor warnings** – clean and hassle-free usage  
+- **Fully customizable menus** to match personal preferences  
+- **Added shortcuts & presets** for convenience  
+- **Removed outdated flags** to streamline performance  
 
-## Features
+### 🔹 **Channels Manager**
+- **Cancel forced Roblox updates** when needed  
+- **Easily switch** between different channels: Production, Live, and ZLive  
 
-- Hassle-free Discord Rich Presence to let your friends know what you're playing at a glance
-- Simple support for modding of content files for customizability (death sound, mouse cursor, etc)
-- See where your server is geographically located (courtesy of [ipinfo.io](https://ipinfo.io))
-- Ability to configure graphics fidelity and UI experience
+### 🔹 **Bootstrapper Improvements**
+- **Bloxshade compatibility** for enhanced visuals  
+- **Multi-instance launching** support  
+- **Fixed various launch errors** & improved Windows detection  
+- **Uninstall settings now properly saved** when checkbox is enabled  
 
-## Installing
-Download the [latest release of Bloxstrap](https://github.com/bloxstraplabs/bloxstrap/releases/latest), and run it. Configure your preferences if needed, and install. That's about it!
+### 🔹 **Appearance & Customization**
+- **New themes** for a personalized look  
+- **Customizable download bar** for tracking progress  
+- **Refined UI layout** with improved icons and readability  
+- **Theme Preview Mode** – Preview themes before applying  
+- **Draggable cursor image** & fixed cursor-related issues  
 
-Alternatively, you can install Bloxstrap via [Winget](https://winstall.app/apps/pizzaboxer.Bloxstrap) by running this in a Command Prompt window:
-```
-> winget install bloxstrap
-```
+### 🔹 **Extras**
+- **Save last opened settings page** for a seamless experience  
+- **Apply custom bootstrapper themes** for added uniqueness  
+- **Bug fixes & overall stability updates**  
+- **Disable forced Roblox updates** to prevent unwanted changes  
+- **Rewritten core for improved performance**  
+- **Beta warning for Roblox updates** to alert users of potential issues  
 
-You will also need the [.NET 6 Desktop Runtime](https://aka.ms/dotnet-core-applaunch?missing_runtime=true&arch=x64&rid=win11-x64&apphost_version=6.0.16&gui=true). If you don't already have it installed, you'll be prompted to install it anyway. Be sure to install Bloxstrap after you've installed this.
+💡 *More exciting features coming soon!* 🚀
 
-It's not unlikely that Windows Smartscreen will show a popup when you run Bloxstrap for the first time. This happens because it's an unknown program, not because it's actually detected as being malicious. To dismiss it, just click on "More info" and then "Run anyway".
+---
 
-Once installed, Bloxstrap is added to your Start Menu, where you can access the menu and reconfigure your preferences if needed.
+## 🛠️ Installation Guide
+1. **[Download the latest version](https://github.com/midaskira/Hellstrap/releases)**  
+2. Run the installer and configure your preferences  
+3. Enjoy an enhanced, optimized Roblox experience!  
 
-## Code
+---
 
-Bloxstrap uses the [WPF UI](https://github.com/lepoco/wpfui) library for the user interface design. We currently use and maintain our own fork of WPF UI at [bloxstraplabs/wpfui](https://github.com/bloxstraplabs/wpfui).
+## 🐞 Found a Bug? Need Help?
+💬 **[Join our Discord](https://discord.gg/UuxcfqPNnA)** for support.  
+📌 **[Submit an issue](https://github.com/midaskira/Hellstrap/issues)** on GitHub.
 
+---
 
-[shield-repo-license]:  https://img.shields.io/github/license/bloxstraplabs/bloxstrap
-[shield-repo-workflow]: https://img.shields.io/github/actions/workflow/status/bloxstraplabs/bloxstrap/ci-release.yml?branch=main&label=builds
-[shield-repo-releases]: https://img.shields.io/github/downloads/bloxstraplabs/bloxstrap/latest/total?color=981bfe
-[shield-repo-latest]:   https://img.shields.io/github/v/release/bloxstraplabs/bloxstrap?color=7a39fb
+## 🎨 Credits
+- **Logo Design**: [midaskira](https://github.com/midaskira)  
+- **Core Development**: [midaskira (Co-Owner)](https://github.com/midaskira) & [KloBraticc (Owner)](https://github.com/KloBraticc)  
+- **Contributors**: [stoof](https://github.com/stoofis), [Flemish](https://github.com/LeventGameing), [5070], [DynamicFF](https://github.com/DynamicFastFlag), [TnoobixRT](https://github.com/TnoobixRT)  
+- **Inspired by**: [Bloxstrap](https://github.com/bloxstraplabs/bloxstrap)  
+- **Looking for developers & contributors** – [Join our Discord](https://discord.gg/UuxcfqPNnA) and DM **midaskira** or **bratic**!
 
-[shield-crowdin-status]: https://badges.crowdin.net/bloxstrap/localized.svg
-[shield-discord-server]: https://img.shields.io/discord/1099468797410283540?logo=discord&logoColor=white&label=discord&color=4d3dff
-[shield-tenor-meme]:     https://img.shields.io/badge/mom_made-pizza_rolls-orange
-
-[repo-license]:  https://github.com/bloxstraplabs/bloxstrap/blob/main/LICENSE
-[repo-actions]:  https://github.com/bloxstraplabs/bloxstrap/actions
-[repo-releases]: https://github.com/bloxstraplabs/bloxstrap/releases
-[repo-latest]:   https://github.com/bloxstraplabs/bloxstrap/releases/latest
-
-[crowdin-project]: https://crowdin.com/project/bloxstrap
-[discord-invite]:  https://discord.gg/nKjV3mGq6R
-[tenor-gif]:       https://media.tenor.com/FIkSGbGycmAAAAAd/manly-roblox.gif
-
-## Code signing policy
-
-Thanks to [SignPath.io](https://signpath.io/) for providing a free code signing service, and the [SignPath Foundation](https://signpath.org/) for providing the free code signing certificate.
+---

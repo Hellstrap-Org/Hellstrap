@@ -11,16 +11,12 @@
 				"Width": "double",
 				"HorizontalAlignment": "HorizontalAlignment",
 				"VerticalAlignment": "VerticalAlignment",
+				"ZIndex": "int",
 				"RenderTransform": "Transform",
 				"LayoutTransform": "Transform",
 				"Opacity": "double",
 				"OpacityMask": "Brush",
-				"RenderTransformOrigin": "Point",
-				"Panel.ZIndex": "int",
-				"Grid.Row": "int",
-				"Grid.RowSpan": "int",
-				"Grid.Column": "int",
-				"Grid.ColumnSpan": "int"
+				"RenderTransformOrigin": "Point"
 			}
 		},
 		"Control": {
@@ -38,15 +34,15 @@
 				"FontFamily": "FontFamily"
 			}
 		},
-		"BloxstrapCustomBootstrapper": {
+		"HellstrapCustomBootstrapper": {
 			"SuperClass": "Control",
 			"IsCreatable": true,
 			"Attributes": {
-				"Version": "int",
 				"Theme": "Theme",
 				"Title": "string",
-				"IgnoreTitleBarInset": "bool",
-				"WindowCornerPreference": "WindowCornerPreference"
+				"WindowBackdropType": "BackgroundType",
+				"WindowCornerPreference": "WindowCornerPreference",
+				"AllowTransparency": "bool"
 			}
 		},
 		"TitleBar": {
@@ -123,49 +119,8 @@
 				"Stretch": "Stretch",
 				"StretchDirection": "StretchDirection",
 				"Source": "ImageSource",
-				"IsAnimated": "bool"
-			}
-		},
-		"Grid": {
-			"SuperClass": "FrameworkElement",
-			"IsCreatable": true,
-			"Attributes": {
-				"RowDefinitions": "object",
-				"ColumnDefinitions": "object"
-			}
-		},
-		"StackPanel": {
-			"SuperClass": "FrameworkElement",
-			"IsCreatable": true,
-			"Attributes": {
-				"Orientation": "Orientation"
-			}
-		},
-		"Border": {
-			"SuperClass": "FrameworkElement",
-			"IsCreatable": true,
-			"Attributes": {
-				"Background": "Brush",
-				"BorderBrush": "Brush",
-				"BorderThickness": "Thickness",
-				"Padding": "Thickness",
-				"CornerRadius": "CornerRadius"
-			}
-		},
-		"RowDefinition": {
-			"IsCreatable": true,
-			"Attributes": {
-				"Height": "GridLength",
-				"MinHeight": "double",
-				"MaxHeight": "double"
-			}
-		},
-		"ColumnDefinition": {
-			"IsCreatable": true,
-			"Attributes": {
-				"Width": "GridLength",
-				"MinWidth": "double",
-				"MaxWidth": "double"
+				"IsAnimated": "bool",
+				"RepeatBehaviour": "string"
 			}
 		},
 		"ScaleTransform": {
@@ -240,6 +195,17 @@
 				"SpreadMethod": "GradientSpreadMethod"
 			}
 		},
+		"RadialGradientBrush": {
+			"SuperClass": "Brush",
+			"IsCreatable": true,
+			"Attributes": {
+				"GradientOrigin": "Point",
+				"Center": "Point",
+				"ColorInterpolationMode": "ColorInterpolationMode",
+				"MappingMode": "BrushMappingMode",
+				"SpreadMethod": "GradientSpreadMethod"
+			}
+		},
 		"GradientStop": {
 			"IsCreatable": true,
 			"Attributes": {
@@ -261,6 +227,13 @@
 				"StrokeMiterLimit": "double",
 				"StrokeStartLineCap": "PenLineCap",
 				"StrokeThickness": "double"
+			}
+		},
+		"Path": {
+			"SuperClass": "Shape",
+			"IsCreatable": true,
+			"Attributes": {
+				"Data": "Geometry"
 			}
 		},
 		"Ellipse": {
@@ -323,15 +296,37 @@
 		"CornerRadius": {},
 		"Brush": { "CanHaveElement": true },
 		"Color": {},
+		"Data": {},
+		"Figures": {},
+		"Geometry": {},
 		"ImageSource": {},
 		"Transform": { "CanHaveElement": true },
 		"FontFamily": {},
-		"GridLength": {},
 		"Visibility": {
 			"Values": [
 				"Visible",
 				"Hidden",
 				"Collapsed"
+			]
+		},
+		"WindowCornerPreference": {
+			"Values": [
+				"Default",
+				"DoNotRound",
+				"Round",
+				"RoundSmall"
+			]
+		},
+		"BackgroundType": {
+			"Values": [
+				"None",
+				"Unkown",
+				"Disable",
+				"Auto",
+				"Mica",
+				"Acrylic",
+				"Tabbed",
+				"Aero"
 			]
 		},
 		"HorizontalAlignment": {
@@ -355,6 +350,12 @@
 				"Default",
 				"Dark",
 				"Light"
+			]
+		},
+		"FillRule": {
+			"Values": [
+				"EvenOdd",
+				"Nonzero"
 			]
 		},
 		"FontWeight": {
@@ -501,20 +502,6 @@
 			"Values": [
 				"Performance",
 				"Quality"
-			]
-		},
-		"Orientation": {
-			"Values": [
-				"Horizontal",
-				"Vertical"
-			]
-		},
-		"WindowCornerPreference": {
-			"Values": [
-				"Default",
-				"DoNotRound",
-				"Round",
-				"RoundSmall"
 			]
 		}
 	}

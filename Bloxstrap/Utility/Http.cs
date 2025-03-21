@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Utility
+﻿namespace Hellstrap.Utility
 {
     internal static class Http
     {

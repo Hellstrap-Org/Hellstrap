@@ -1,10 +1,14 @@
-﻿namespace Bloxstrap.Enums.FlagPresets
+﻿namespace Hellstrap.Enums.FlagPresets
 {
     public enum LightingMode
     {
         Default,
         Voxel,
         ShadowMap,
-        Future
+        Future,
+        [EnumName(StaticName = "Unified (Phase 4)")]
+        Unified,
     }
+
 }
+

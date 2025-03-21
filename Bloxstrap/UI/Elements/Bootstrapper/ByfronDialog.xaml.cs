@@ -5,10 +5,10 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shell;
 
-using Bloxstrap.UI.Elements.Bootstrapper.Base;
-using Bloxstrap.UI.ViewModels.Bootstrapper;
+using Hellstrap.UI.Elements.Bootstrapper.Base;
+using Hellstrap.UI.ViewModels.Bootstrapper;
 
-namespace Bloxstrap.UI.Elements.Bootstrapper
+namespace Hellstrap.UI.Elements.Bootstrapper
 {
     /// <summary>
     /// Interaction logic for ByfronDialog.xaml
@@ -17,7 +17,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
     {
         private readonly ByfronDialogViewModel _viewModel;
 
-        public Bloxstrap.Bootstrapper? Bootstrapper { get; set; }
+        public Hellstrap.Bootstrapper? Bootstrapper { get; set; }
 
         private bool _isClosing;
 
@@ -104,7 +104,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
 
         public ByfronDialog()
         {
-            string version = Utilities.GetRobloxVersionStr(Bootstrapper?.IsStudioLaunch ?? false);
+            string version = Utilities.GetRobloxVersion(Bootstrapper?.IsStudioLaunch ?? false);
             _viewModel = new ByfronDialogViewModel(this, version);
             DataContext = _viewModel;
             Title = App.Settings.Prop.BootstrapperTitle;

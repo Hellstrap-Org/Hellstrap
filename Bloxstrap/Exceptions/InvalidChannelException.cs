@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Exceptions
+﻿namespace Hellstrap.Exceptions
 {
     public class InvalidChannelException : Exception
     {

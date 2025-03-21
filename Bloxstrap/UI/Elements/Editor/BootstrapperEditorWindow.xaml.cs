@@ -4,14 +4,15 @@ using System.Xml;
 using ICSharpCode.AvalonEdit.CodeCompletion;
 using ICSharpCode.AvalonEdit.Document;
 using ICSharpCode.AvalonEdit.Editing;
-using ICSharpCode.AvalonEdit.Highlighting.Xshd;
-using ICSharpCode.AvalonEdit.Highlighting;
 
-using Bloxstrap.UI.Elements.Base;
-using Bloxstrap.UI.ViewModels.Editor;
+using Hellstrap.UI.Elements.Base;
+using Hellstrap.UI.ViewModels.Editor;
+using ICSharpCode.AvalonEdit.Highlighting;
+using System.Windows.Media;
+using ICSharpCode.AvalonEdit.Highlighting.Xshd;
 using System.Windows;
 
-namespace Bloxstrap.UI.Elements.Editor
+namespace Hellstrap.UI.Elements.Editor
 {
     /// <summary>
     /// Interaction logic for BootstrapperEditorWindow.xaml
@@ -131,51 +132,40 @@ namespace Bloxstrap.UI.Elements.Editor
             }
         }
 
-        private BootstrapperEditorWindowViewModel _viewModel;
-        private CompletionWindow? _completionWindow = null;
+        CompletionWindow? _completionWindow = null;
 
         public BootstrapperEditorWindow(string name)
         {
             CustomBootstrapperSchema.ParseSchema();
 
-            string directory = Path.Combine(Paths.CustomThemes, name);
-
-            string themeContents = File.ReadAllText(Path.Combine(directory, "Theme.xml"));
+            string themeContents = File.ReadAllText(Path.Combine(Paths.CustomThemes, name, "Theme.xml"));
             themeContents = ToCRLF(themeContents); // make sure the theme is in CRLF. a function expects CRLF.
 
-            _viewModel = new BootstrapperEditorWindowViewModel();
-            _viewModel.ThemeSavedCallback = ThemeSavedCallback;
-            _viewModel.Directory = directory;
-            _viewModel.Name = name;
-            _viewModel.Title = string.Format(Strings.CustomTheme_Editor_Title, name);
-            _viewModel.Code = themeContents;
+            var viewModel = new BootstrapperEditorWindowViewModel();
+            viewModel.Name = name;
+            viewModel.Title = $"Editing \"{name}\"";
+            viewModel.Code = themeContents;
 
-            DataContext = _viewModel;
+            DataContext = viewModel;
             InitializeComponent();
 
-            UIXML.Text = _viewModel.Code;
-            UIXML.TextChanged += OnCodeChanged;
+            UIXML.Text = viewModel.Code;
             UIXML.TextArea.TextEntered += OnTextAreaTextEntered;
 
-            LoadHighlightingTheme();
-        }
+            // im so stupid
 
-        private void LoadHighlightingTheme()
-        {
-            string name = $"Editor-Theme-{App.Settings.Prop.Theme.GetFinal()}.xshd";
-            using Stream xmlStream = Resource.GetStream(name);
-            using XmlReader reader = XmlReader.Create(xmlStream);
-            UIXML.SyntaxHighlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+            var resourceUri = App.Settings.Prop.Theme.GetFinal() == Enums.Theme.Light ? new Uri("pack://application:,,,/Resources/LightEditor.xshd") : new Uri("pack://application:,,,/Resources/DarkEditor.xshd");
+            using (var stream = Application.GetResourceStream(resourceUri)?.Stream)
+            {
+                if (stream == null)
+                    throw new FileNotFoundException("Resource not found");
 
-            UIXML.TextArea.TextView.SetResourceReference(ICSharpCode.AvalonEdit.Rendering.TextView.LinkTextForegroundBrushProperty, "NewTextEditorLink");
-        }
-
-        private void ThemeSavedCallback(bool success, string message)
-        {
-            if (success)
-                Snackbar.Show(Strings.CustomTheme_Editor_Save_Success, message, Wpf.Ui.Common.SymbolRegular.CheckmarkCircle32, Wpf.Ui.Common.ControlAppearance.Success);
-            else
-                Snackbar.Show(Strings.CustomTheme_Editor_Save_Error, message, Wpf.Ui.Common.SymbolRegular.ErrorCircle24, Wpf.Ui.Common.ControlAppearance.Danger);
+                using (var reader = new XmlTextReader(stream))
+                {
+                    var highlighting = HighlightingLoader.Load(reader, HighlightingManager.Instance);
+                    UIXML.SyntaxHighlighting = highlighting;
+                }
+            }
         }
 
         private static string ToCRLF(string text)
@@ -183,26 +173,11 @@ namespace Bloxstrap.UI.Elements.Editor
             return text.Replace("\r\n", "\n").Replace("\r", "\n").Replace("\n", "\r\n");
         }
 
-        private void OnCodeChanged(object? sender, EventArgs e)
+        private void OnCodeChanged(object sender, EventArgs e)
         {
-            _viewModel.Code = UIXML.Text;
-            _viewModel.CodeChanged = true;
-        }
-
-        private void OnClosing(object sender, System.ComponentModel.CancelEventArgs e)
-        {
-            if (!_viewModel.CodeChanged)
-                return;
-
-            var result = Frontend.ShowMessageBox(string.Format(Strings.CustomTheme_Editor_ConfirmSave, _viewModel.Name), MessageBoxImage.Information, MessageBoxButton.YesNoCancel);
-            if (result == MessageBoxResult.Cancel)
-            {
-                e.Cancel = true;
-            }
-            else if (result == MessageBoxResult.Yes)
-            {
-                _viewModel.SaveCommand.Execute(null);
-            }
+            BootstrapperEditorWindowViewModel viewModel = (BootstrapperEditorWindowViewModel)DataContext;
+            viewModel.Code = UIXML.Text;
+            viewModel.OnPropertyChanged(nameof(viewModel.Code));
         }
 
         private void OnTextAreaTextEntered(object sender, TextCompositionEventArgs e)

@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.AppData
+﻿namespace Hellstrap.AppData
 {
     internal interface IAppData
     {

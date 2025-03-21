@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.AppData
+﻿namespace Hellstrap.AppData
 {
     public class RobloxStudioData : CommonAppData, IAppData
     {
@@ -10,7 +10,7 @@
 
         public override string ExecutableName => "RobloxStudioBeta.exe";
 
-        public override AppState State => App.RobloxState.Prop.Studio;
+        public override AppState State => App.State.Prop.Studio;
 
         public override IReadOnlyDictionary<string, string> PackageDirectoryMap { get; set; } = new Dictionary<string, string>()
         {

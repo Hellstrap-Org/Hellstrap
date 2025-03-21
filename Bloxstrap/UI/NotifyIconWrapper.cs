@@ -1,8 +1,8 @@
-﻿using Bloxstrap.Integrations;
-using Bloxstrap.UI.Elements.About;
-using Bloxstrap.UI.Elements.ContextMenu;
+﻿using Hellstrap.Integrations;
+using Hellstrap.UI.Elements.About;
+using Hellstrap.UI.Elements.ContextMenu;
 
-namespace Bloxstrap.UI
+namespace Hellstrap.UI
 {
     public class NotifyIconWrapper : IDisposable
     {
@@ -28,8 +28,8 @@ namespace Bloxstrap.UI
 
             _notifyIcon = new(new System.ComponentModel.Container())
             {
-                Icon = Properties.Resources.IconBloxstrap,
-                Text = App.ProjectName,
+                Icon = Properties.Resources.IconHellstrap,
+                Text = "Hellstrap",
                 Visible = true
             };
 

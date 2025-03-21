@@ -1,7 +1,8 @@
 ﻿using System.Windows;
+using Hellstrap;
 using Microsoft.Win32;
 
-namespace Bloxstrap
+namespace Hellstrap
 {
     internal class Installer
     {
@@ -9,7 +10,7 @@ namespace Bloxstrap
         /// Should this version automatically open the release notes page?
         /// Recommended for major updates only.
         /// </summary>
-        private const bool OpenReleaseNotes = true;
+        private const bool OpenReleaseNotes = false;
 
         private static string DesktopShortcut => Path.Combine(Paths.Desktop, $"{App.ProjectName}.lnk");
 
@@ -79,7 +80,9 @@ namespace Bloxstrap
                 uninstallKey.SetValueSafe("URLUpdateInfo", App.ProjectDownloadLink);
             }
 
-            // only register player, for the scenario where the user installs bloxstrap, closes it,
+            WindowsRegistry.RegisterApis();
+
+            // only register player, for the scenario where the user installs Hellstrap, closes it,
             // and then launches from the website expecting it to work
             // studio can be implicitly registered when it's first launched manually
             WindowsRegistry.RegisterPlayer();
@@ -104,8 +107,6 @@ namespace Bloxstrap
 
             App.Logger.WriteLine(LOG_IDENT, "Installation finished");
 
-            if (!IsImplicitInstall)
-                App.SendStat("installAction", "install");
         }
 
         private bool ValidateLocation()
@@ -149,7 +150,7 @@ namespace Bloxstrap
             }
             else
             {
-                if (!IsImplicitInstall 
+                if (!IsImplicitInstall
                     && !InstallLocation.EndsWith(App.ProjectName, StringComparison.InvariantCultureIgnoreCase)
                     && Directory.Exists(InstallLocation)
                     && Directory.EnumerateFileSystemEntries(InstallLocation).Any())
@@ -196,8 +197,8 @@ namespace Bloxstrap
             const string LOG_IDENT = "Installer::DoUninstall";
 
             var processes = new List<Process>();
-            
-            if (!String.IsNullOrEmpty(App.RobloxState.Prop.Player.VersionGuid))
+
+            if (!String.IsNullOrEmpty(App.State.Prop.Player.VersionGuid))
                 processes.AddRange(Process.GetProcessesByName(App.RobloxPlayerAppName));
 
             if (App.IsStudioVisible)
@@ -278,6 +279,8 @@ namespace Bloxstrap
                 WindowsRegistry.RegisterStudioFileClass(studioPath, "-ide \"%1\"");
             }
 
+            Registry.CurrentUser.DeleteSubKey(App.ApisKey);
+
             var cleanupSequence = new List<Action>
             {
                 () =>
@@ -294,16 +297,24 @@ namespace Bloxstrap
                 () => File.Delete(StartMenuShortcut),
 
                 () => Directory.Delete(Paths.Versions, true),
+
                 () => Directory.Delete(Paths.Downloads, true),
 
-                () => File.Delete(App.State.FileLocation)
+                () => File.Delete(App.State.FileLocation),
+
+                () =>
+                {
+                if (Paths.Roblox == Path.Combine(Paths.Base, "Roblox")) // checking if roblox is installed in base directory
+                    Directory.Delete(Paths.Roblox, true);               // made that to prevent accidental removals of different builds
+                }
             };
+
 
             if (!keepData)
             {
                 cleanupSequence.AddRange(new List<Action>
                 {
-                    () => Directory.Delete(Paths.Modifications, true),
+                    () => Directory.Delete(Paths.Mods, true),
                     () => Directory.Delete(Paths.Logs, true),
 
                     () => File.Delete(App.Settings.FileLocation)
@@ -352,8 +363,6 @@ namespace Bloxstrap
                     WindowStyle = ProcessWindowStyle.Hidden
                 });
             }
-
-            App.SendStat("installAction", "uninstall");
         }
 
         public static void HandleUpgrade()
@@ -470,8 +479,8 @@ namespace Bloxstrap
 
                 if (Utilities.CompareVersions(existingVer, "2.3.0") == VersionComparison.LessThan)
                 {
-                    string injectorLocation = Path.Combine(Paths.Modifications, "dxgi.dll");
-                    string configLocation = Path.Combine(Paths.Modifications, "ReShade.ini");
+                    string injectorLocation = Path.Combine(Paths.Mods, "dxgi.dll");
+                    string configLocation = Path.Combine(Paths.Mods, "ReShade.ini");
 
                     if (File.Exists(injectorLocation))
                         File.Delete(injectorLocation);
@@ -493,7 +502,7 @@ namespace Bloxstrap
                     {
                         try
                         {
-                            File.Delete(Path.Combine(Paths.Modifications, "ExtraContent\\places\\Mobile.rbxl"));
+                            File.Delete(Path.Combine(Paths.Mods, "ExtraContent\\places\\Mobile.rbxl"));
                         }
                         catch (Exception ex)
                         {
@@ -528,7 +537,7 @@ namespace Bloxstrap
                     }
 
                     string oldDesktopPath = Path.Combine(Paths.Desktop, "Play Roblox.lnk");
-                    string oldStartPath = Path.Combine(Paths.WindowsStartMenu, "Bloxstrap");
+                    string oldStartPath = Path.Combine(Paths.WindowsStartMenu, "Hellstrap");
 
                     if (File.Exists(oldDesktopPath))
                         File.Move(oldDesktopPath, DesktopShortcut, true);
@@ -547,7 +556,7 @@ namespace Bloxstrap
                         Shortcut.Create(Paths.Application, "", StartMenuShortcut);
                     }
 
-                    Registry.CurrentUser.DeleteSubKeyTree("Software\\Bloxstrap", false);
+                    Registry.CurrentUser.DeleteSubKeyTree("Software\\Hellstrap", false);
 
                     WindowsRegistry.RegisterPlayer();
 
@@ -587,35 +596,26 @@ namespace Bloxstrap
                     }
                 }
 
-                if (Utilities.CompareVersions(existingVer, "2.9.0") == VersionComparison.LessThan)
+                if (Utilities.CompareVersions(existingVer, "2.8.3") == VersionComparison.LessThan)
                 {
-                    // move from App.State to App.RobloxState
-                    if (App.State.Prop.GetDeprecatedPlayer() != null)
-                        App.RobloxState.Prop.Player = App.State.Prop.GetDeprecatedPlayer()!;
-
-                    if (App.State.Prop.GetDeprecatedStudio() != null)
-                        App.RobloxState.Prop.Studio = App.State.Prop.GetDeprecatedStudio()!;
-
-                    if (App.State.Prop.GetDeprecatedModManifest() != null)
-                        App.RobloxState.Prop.ModManifest = App.State.Prop.GetDeprecatedModManifest()!;
+                    // force reinstallation
+                    App.State.Prop.Player.VersionGuid = "";
+                    App.State.Prop.Studio.VersionGuid = "";
                 }
 
                 App.Settings.Save();
                 App.FastFlags.Save();
                 App.State.Save();
-                App.RobloxState.Save();
             }
 
             if (currentVer is null)
                 return;
 
-            App.SendStat("installAction", "upgrade");
-
             if (isAutoUpgrade)
             {
 #pragma warning disable CS0162 // Unreachable code detected
                 if (OpenReleaseNotes)
-                    Utilities.ShellExecute($"https://github.com/{App.ProjectRepository}/wiki/Release-notes-for-Bloxstrap-v{currentVer}");
+                    Utilities.ShellExecute($"https://github.com/{App.ProjectRepository}/wiki/Release-notes-for-Hellstrap-v{currentVer}");
 #pragma warning restore CS0162 // Unreachable code detected
             }
             else

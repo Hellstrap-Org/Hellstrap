@@ -1,5 +1,5 @@
-﻿using Bloxstrap.UI.Elements.Bootstrapper.Base;
-using Bloxstrap.UI.ViewModels.Bootstrapper;
+﻿using Hellstrap.UI.Elements.Bootstrapper.Base;
+using Hellstrap.UI.ViewModels.Bootstrapper;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -19,7 +19,7 @@ using System.Windows.Shapes;
 using System.Windows.Shell;
 using System.Windows.Threading;
 
-namespace Bloxstrap.UI.Elements.Bootstrapper
+namespace Hellstrap.UI.Elements.Bootstrapper
 {
     /// <summary>
     /// Interaction logic for FluentDialog.xaml
@@ -28,7 +28,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
     {
         private readonly FluentDialogViewModel _viewModel;
 
-        public Bloxstrap.Bootstrapper? Bootstrapper { get; set; }
+        public Hellstrap.Bootstrapper? Bootstrapper { get; set; }
 
         private bool _isClosing;
 
@@ -110,7 +110,10 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
         {
             InitializeComponent();
 
-            _viewModel = new FluentDialogViewModel(this, aero);
+            string version = Utilities.GetRobloxVersion(false);
+            string channel = App.Settings.Prop.Channel;
+
+            _viewModel = new FluentDialogViewModel(this, aero, version, channel);
             DataContext = _viewModel;
             Title = App.Settings.Prop.BootstrapperTitle;
             Icon = App.Settings.Prop.BootstrapperIcon.GetIcon().GetImageSource();

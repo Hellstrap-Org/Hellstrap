@@ -3,7 +3,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media;
 
-namespace Bloxstrap.UI.Utility
+namespace Hellstrap.UI.Utility
 {
     static class Rendering
     {

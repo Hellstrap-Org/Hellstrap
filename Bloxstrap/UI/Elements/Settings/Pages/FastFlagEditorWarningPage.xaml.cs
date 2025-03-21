@@ -1,7 +1,7 @@
-﻿using Bloxstrap.UI.ViewModels.Settings;
+﻿using Hellstrap.UI.ViewModels.Settings;
 using System.Windows;
 
-namespace Bloxstrap.UI.Elements.Settings.Pages
+namespace Hellstrap.UI.Elements.Settings.Pages
 {
     /// <summary>
     /// Interaction logic for FastFlagEditorWarningPage.xaml

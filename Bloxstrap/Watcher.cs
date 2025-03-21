@@ -1,15 +1,16 @@
-﻿using Bloxstrap.AppData;
-using Bloxstrap.Integrations;
-using Bloxstrap.Models;
+﻿using Hellstrap.AppData;
+using Hellstrap.Integrations;
+using Hellstrap.Models;
+using Hellstrap;
 
-namespace Bloxstrap
+namespace Hellstrap
 {
     public class Watcher : IDisposable
     {
         private readonly InterProcessLock _lock = new("Watcher");
 
         private readonly WatcherData? _watcherData;
-        
+
         private readonly NotifyIconWrapper? _notifyIcon;
 
         public readonly ActivityWatcher? ActivityWatcher;
@@ -20,6 +21,7 @@ namespace Bloxstrap
         {
             const string LOG_IDENT = "Watcher";
 
+
             if (!_lock.IsAcquired)
             {
                 App.Logger.WriteLine(LOG_IDENT, "Watcher instance already exists");
@@ -28,21 +30,21 @@ namespace Bloxstrap
 
             string? watcherDataArg = App.LaunchSettings.WatcherFlag.Data;
 
+#if DEBUG
             if (String.IsNullOrEmpty(watcherDataArg))
             {
-#if DEBUG
                 string path = new RobloxPlayerData().ExecutablePath;
                 using var gameClientProcess = Process.Start(path);
 
                 _watcherData = new() { ProcessId = gameClientProcess.Id };
+            }
 #else
+            if (String.IsNullOrEmpty(watcherDataArg))
                 throw new Exception("Watcher data not specified");
 #endif
-            }
-            else
-            {
+
+            if (!String.IsNullOrEmpty(watcherDataArg))
                 _watcherData = JsonSerializer.Deserialize<WatcherData>(Encoding.UTF8.GetString(Convert.FromBase64String(watcherDataArg)));
-            }
 
             if (_watcherData is null)
                 throw new Exception("Watcher data is invalid");
@@ -61,8 +63,11 @@ namespace Bloxstrap
                     };
                 }
 
-                if (App.Settings.Prop.UseDiscordRichPresence)
+                if (App.Settings.Prop.UseDiscordRichPresence && !App.State.Prop.WatcherRunning)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Running rpc");
                     RichPresence = new(ActivityWatcher);
+                }
             }
 
             _notifyIcon = new(this);
@@ -124,6 +129,8 @@ namespace Bloxstrap
 
             _notifyIcon?.Dispose();
             RichPresence?.Dispose();
+
+            App.State.Prop.WatcherRunning = false;
 
             GC.SuppressFinalize(this);
         }

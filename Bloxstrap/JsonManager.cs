@@ -1,21 +1,18 @@
 ﻿using System.Runtime.CompilerServices;
+using System.Windows;
+using System.Xml.Linq;
 
-namespace Bloxstrap
+namespace Hellstrap
 {
     public class JsonManager<T> where T : class, new()
     {
         public T OriginalProp { get; set; } = new();
-        
+
         public T Prop { get; set; } = new();
 
-        /// <summary>
-        /// The file hash when last retrieved from disk
-        /// </summary>
-        public string? LastFileHash { get; private set; }
-
-        public bool Loaded { get; set; } = false;
-
         public virtual string ClassName => typeof(T).Name;
+        
+        public virtual string BackupsLocation => Path.Combine(Paths.Base, $"Backup.json");
 
         public virtual string FileLocation => Path.Combine(Paths.Base, $"{ClassName}.json");
 
@@ -23,22 +20,19 @@ namespace Bloxstrap
 
         public virtual void Load(bool alertFailure = true)
         {
+            
             string LOG_IDENT = $"{LOG_IDENT_CLASS}::Load";
 
             App.Logger.WriteLine(LOG_IDENT, $"Loading from {FileLocation}...");
 
             try
             {
-                string contents = File.ReadAllText(FileLocation);
-
-                T? settings = JsonSerializer.Deserialize<T>(contents);
+                T? settings = JsonSerializer.Deserialize<T>(File.ReadAllText(FileLocation));
 
                 if (settings is null)
                     throw new ArgumentNullException("Deserialization returned null");
 
                 Prop = settings;
-                Loaded = true;
-                LastFileHash = MD5Hash.FromString(contents);
 
                 App.Logger.WriteLine(LOG_IDENT, "Loaded successfully!");
             }
@@ -51,9 +45,9 @@ namespace Bloxstrap
                 {
                     string message = "";
 
-                    if (ClassName == nameof(Settings))
+                    if (ClassName == nameof(Models.Persistable.AppSettings))
                         message = Strings.JsonManager_SettingsLoadFailed;
-                    else if (ClassName == nameof(FastFlagManager))
+                    else if (ClassName == nameof(Hellstrap.FastFlagManager))
                         message = Strings.JsonManager_FastFlagsLoadFailed;
 
                     if (!String.IsNullOrEmpty(message))
@@ -85,11 +79,7 @@ namespace Bloxstrap
 
             try
             {
-                string contents = JsonSerializer.Serialize(Prop, new JsonSerializerOptions { WriteIndented = true });
-
-                File.WriteAllText(FileLocation, contents);
-
-                LastFileHash = MD5Hash.FromString(contents);
+                File.WriteAllText(FileLocation, JsonSerializer.Serialize(Prop, new JsonSerializerOptions { WriteIndented = true }));
             }
             catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
             {
@@ -105,12 +95,94 @@ namespace Bloxstrap
             App.Logger.WriteLine(LOG_IDENT, "Save complete!");
         }
 
-        /// <summary>
-        /// Is the file on disk different to the one deserialised during this session?
-        /// </summary>
-        public bool HasFileOnDiskChanged()
+        public void SaveBackup(string name)
         {
-            return LastFileHash != MD5Hash.FromFile(FileLocation);
+            string LOGGER_STRING = "SaveBackup::Backups";
+
+            string BaseDir = Paths.SavedBackups;
+            try
+            {
+                string FileDirectory = Path.Combine(BaseDir, name);
+
+                if (string.IsNullOrEmpty(name))
+                    return;
+
+                if (!Directory.Exists(BaseDir))
+                    Directory.CreateDirectory(BaseDir);
+
+                App.Logger.WriteLine(LOGGER_STRING, $"Writing flag backup {name}");
+
+                if (!File.Exists(FileDirectory))
+                    File.Create(FileDirectory).Dispose();
+
+                string FastFlagsJson = JsonSerializer.Serialize(Prop, new JsonSerializerOptions { WriteIndented = true });
+
+                File.WriteAllText(FileDirectory, FastFlagsJson);
+            }
+            catch (Exception ex)
+            {
+                Frontend.ShowMessageBox(ex.Message, MessageBoxImage.Error);
+            }
+        }
+
+        public void LoadBackup(string? name, bool? clearFlags)
+        {
+            string LOGGER_STRING = "LoadBackup::Backups";
+
+            string BaseDir = Paths.SavedBackups;
+
+            if (string.IsNullOrEmpty(name))
+                return;
+
+
+            try
+            {
+                if (!Directory.Exists(BaseDir))
+                    Directory.CreateDirectory(BaseDir);
+
+                string[] Files = Directory.GetFiles(BaseDir);
+
+                string FoundFile = string.Empty;
+
+                foreach (var file in Files)
+                {
+                    if (Path.GetFileName(file) == name)
+                    {
+                        FoundFile = file;
+                        break;
+                    }
+                }
+
+                string SavedClientSettings = File.ReadAllText(FoundFile);
+
+                App.Logger.WriteLine(LOGGER_STRING, $"Loading {SavedClientSettings}");
+
+                T? settings = JsonSerializer.Deserialize<T>(SavedClientSettings);
+
+                if (settings is null)
+                    throw new ArgumentNullException("Deserialization returned null");
+
+                if (clearFlags == true)
+                {
+                    Prop = settings;
+                }
+                else
+                {
+                    if (settings is IDictionary<string, object> settingsDict && Prop is IDictionary<string, object> propDict)
+                    {
+                        foreach (var kvp in settingsDict)
+                        {
+                            if (kvp.Value != null)
+                                propDict[kvp.Key] = kvp.Value;
+                        }
+                    }
+                }
+
+                App.FastFlags.Save();
+            } catch (Exception ex)
+            {
+                Frontend.ShowMessageBox(ex.Message,MessageBoxImage.Error);
+            }
         }
     }
 }

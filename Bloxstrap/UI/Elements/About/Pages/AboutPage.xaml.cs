@@ -1,9 +1,9 @@
-﻿using Bloxstrap.UI.ViewModels.About;
+﻿using Hellstrap.UI.ViewModels.About;
 
 using System.Windows.Input;
 using System.Windows.Media.Animation;
 
-namespace Bloxstrap.UI.Elements.About.Pages
+namespace Hellstrap.UI.Elements.About.Pages
 {
     /// <summary>
     /// Interaction logic for AboutPage.xaml
@@ -43,6 +43,11 @@ namespace Bloxstrap.UI.Elements.About.Pages
                 var storyboard = Resources["EggStoryboard"] as Storyboard;
                 storyboard!.Begin();
             }
+        }
+
+        private void Anchor_Click(object sender, System.Windows.RoutedEventArgs e)
+        {
+
         }
     }
 }

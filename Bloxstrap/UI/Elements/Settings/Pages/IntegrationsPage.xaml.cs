@@ -1,8 +1,8 @@
 ﻿using System.Windows.Controls;
 
-using Bloxstrap.UI.ViewModels.Settings;
+using Hellstrap.UI.ViewModels.Settings;
 
-namespace Bloxstrap.UI.Elements.Settings.Pages
+namespace Hellstrap.UI.Elements.Settings.Pages
 {
     /// <summary>
     /// Interaction logic for IntegrationsPage.xaml
@@ -20,6 +20,11 @@ namespace Bloxstrap.UI.Elements.Settings.Pages
             IntegrationsViewModel viewModel = (IntegrationsViewModel)DataContext;
             viewModel.SelectedCustomIntegration = (CustomIntegration)((ListBox)sender).SelectedItem;
             viewModel.OnPropertyChanged(nameof(viewModel.SelectedCustomIntegration));
+        }
+
+        private void ToggleSwitch_Checked(object sender, System.Windows.RoutedEventArgs e)
+        {
+
         }
     }
 }

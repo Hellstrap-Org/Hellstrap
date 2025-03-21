@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Extensions
+﻿namespace Hellstrap.Extensions
 {
     static class DateTimeEx
     {

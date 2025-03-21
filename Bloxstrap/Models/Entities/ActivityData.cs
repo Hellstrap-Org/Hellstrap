@@ -1,14 +1,18 @@
-﻿using System.Web;
+﻿using System.DirectoryServices.ActiveDirectory;
+using System.Runtime.InteropServices;
+using System.Web;
 using System.Windows;
 using System.Windows.Input;
-using Bloxstrap.AppData;
-using Bloxstrap.Models.APIs;
+using Hellstrap.AppData;
+using Hellstrap.Models.APIs;
 using CommunityToolkit.Mvvm.Input;
+using Hellstrap;
 
-namespace Bloxstrap.Models.Entities
+namespace Hellstrap.Models.Entities
 {
     public class ActivityData
     {
+
         private long _universeId = 0;
 
         /// <summary>
@@ -27,6 +31,20 @@ namespace Bloxstrap.Models.Entities
             }
         }
 
+        public class UserLog
+        {
+            public string UserId { get; set; } = "Unknown";
+            public string Username { get; set; } = "Unknown";
+            public string Type { get; set; } = "Unknown";
+            public DateTime Time { get; set; } = DateTime.Now;
+        }
+
+        public class UserMessage
+        {
+            public string Message { get; set; } = "Unknown";
+            public DateTime Time { get; set; } = DateTime.Now;
+        }
+
         public long PlaceId { get; set; } = 0;
 
         public string JobId { get; set; } = string.Empty;
@@ -35,7 +53,7 @@ namespace Bloxstrap.Models.Entities
         /// This will be empty unless the server joined is a private server
         /// </summary>
         public string AccessCode { get; set; } = string.Empty;
-        
+
         public long UserId { get; set; } = 0;
 
         public string MachineAddress { get; set; } = string.Empty;
@@ -50,7 +68,7 @@ namespace Bloxstrap.Models.Entities
 
         public DateTime? TimeLeft { get; set; }
 
-        // everything below here is optional strictly for bloxstraprpc, discord rich presence, or game history
+        // everything below here is optional strictly for Hellstraprpc, discord rich presence, or game history
 
         /// <summary>
         /// This is intended only for other people to use, i.e. context menu invite link, rich presence joining
@@ -64,9 +82,9 @@ namespace Bloxstrap.Models.Entities
             get
             {
                 string desc = string.Format(
-                    "{0} • {1} {2} {3}", 
+                    "{0} • {1} {2} {3}",
                     UniverseDetails?.Data.Creator.Name,
-                    TimeJoined.ToString("t"), 
+                    TimeJoined.ToString("t"),
                     Locale.CurrentCulture.Name.StartsWith("ja") ? '~' : '-',
                     TimeLeft?.ToString("t")
                 );
@@ -80,13 +98,17 @@ namespace Bloxstrap.Models.Entities
 
         public ICommand RejoinServerCommand => new RelayCommand(RejoinServer);
 
+        public Dictionary<int, UserLog> PlayerLogs { get; internal set; } = new();
+
+        public Dictionary<int, UserMessage> MessageLogs { get; internal set; } = new();
+
         private SemaphoreSlim serverQuerySemaphore = new(1, 1);
 
         public string GetInviteDeeplink(bool launchData = true)
         {
-            string deeplink = $"roblox://experiences/start?placeId={PlaceId}";
+            string deeplink = $"https://www.roblox.com/games/start?placeId={PlaceId}";
 
-            if (ServerType == ServerType.Private)
+            if (ServerType == ServerType.Private) // thats not going to work
                 deeplink += "&accessCode=" + AccessCode;
             else
                 deeplink += "&gameInstanceId=" + JobId;

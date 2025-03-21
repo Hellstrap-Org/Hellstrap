@@ -1,6 +1,6 @@
 ﻿using System.Windows;
 
-namespace Bloxstrap.UI.ViewModels.About
+namespace Hellstrap.UI.ViewModels.About
 {
     public class SupportersViewModel : NotifyPropertyChangedViewModel
     {
@@ -42,7 +42,7 @@ namespace Bloxstrap.UI.ViewModels.About
 
             try
             {
-                SupporterData = await Http.GetJson<SupporterData>("https://raw.githubusercontent.com/bloxstraplabs/config/main/supporters.json");
+                SupporterData = await Http.GetJson<SupporterData>("https://raw.githubusercontent.com/Hellstraplabs/config/main/supporters.json");
             }
             catch (Exception ex)
             {

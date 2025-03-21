@@ -2,11 +2,11 @@
 using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 
-namespace Bloxstrap.UI.ViewModels.Installer
+namespace Hellstrap.UI.ViewModels.Installer
 {
     public class InstallViewModel : NotifyPropertyChangedViewModel
     {
-        private readonly Bloxstrap.Installer installer = new();
+        private readonly Hellstrap.Installer installer = new();
 
         private readonly string _originalInstallLocation;
 
@@ -44,12 +44,6 @@ namespace Bloxstrap.UI.ViewModels.Installer
         {
             get => installer.CreateStartMenuShortcuts;
             set => installer.CreateStartMenuShortcuts = value;
-        }
-
-        public bool AnalyticsEnabled
-        {
-            get => installer.EnableAnalytics;
-            set => installer.EnableAnalytics = value;
         }
 
         public ICommand BrowseInstallLocationCommand => new RelayCommand(BrowseInstallLocation);

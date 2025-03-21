@@ -11,11 +11,11 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Bloxstrap.UI.ViewModels.Dialogs;
-using Bloxstrap.UI.ViewModels.Installer;
+using Hellstrap.UI.ViewModels.Dialogs;
+using Hellstrap.UI.ViewModels.Installer;
 using Wpf.Ui.Mvvm.Interfaces;
 
-namespace Bloxstrap.UI.Elements.Dialogs
+namespace Hellstrap.UI.Elements.Dialogs
 {
     /// <summary>
     /// Interaction logic for LaunchMenuDialog.xaml

@@ -1,6 +1,6 @@
 ﻿using System.Windows.Media;
 
-namespace Bloxstrap.Models
+namespace Hellstrap.Models
 {
     public class BootstrapperIconEntry
     {

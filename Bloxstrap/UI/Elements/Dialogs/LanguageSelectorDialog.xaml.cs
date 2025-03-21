@@ -11,9 +11,9 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
-using Bloxstrap.UI.ViewModels.Dialogs;
+using Hellstrap.UI.ViewModels.Dialogs;
 
-namespace Bloxstrap.UI.Elements.Dialogs
+namespace Hellstrap.UI.Elements.Dialogs
 {
     /// <summary>
     /// Interaction logic for LanguageSelectorDialog.xaml

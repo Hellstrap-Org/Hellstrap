@@ -1,13 +1,16 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
+using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-
 using Wpf.Ui.Controls.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
+using Hellstrap.UI.ViewModels.Settings;
+using Wpf.Ui.Common;
+using Hellstrap.UI.Elements.Dialogs;
 
-using Bloxstrap.UI.ViewModels.Settings;
-
-namespace Bloxstrap.UI.Elements.Settings
+namespace Hellstrap.UI.Elements.Settings
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -18,90 +21,166 @@ namespace Bloxstrap.UI.Elements.Settings
 
         public MainWindow(bool showAlreadyRunningWarning)
         {
-            var viewModel = new MainWindowViewModel();
-
-            viewModel.RequestSaveNoticeEvent += (_, _) => SettingsSavedSnackbar.Show();
-            viewModel.RequestCloseWindowEvent += (_, _) => Close();
-
-            DataContext = viewModel;
-            
             InitializeComponent();
+            InitializeViewModel();
+            InitializeWindowState();
+            InitializeNavigation();
 
             App.Logger.WriteLine("MainWindow", "Initializing settings window");
 
-#if DEBUG // easier access
-            EditorWarningNavItem.Visibility = Visibility.Visible;
-#endif
-
             if (showAlreadyRunningWarning)
-                ShowAlreadyRunningSnackbar();
-
-            LoadState();
+                _ = ShowAlreadyRunningSnackbar();
         }
 
-        public void LoadState()
+        /// <summary>
+        /// Initializes the ViewModel and event handlers.
+        /// </summary>
+        private void InitializeViewModel()
         {
-            if (_state.Left > SystemParameters.VirtualScreenWidth)
-                _state.Left = 0;
+            var viewModel = new MainWindowViewModel();
+            DataContext = viewModel;
 
-            if (_state.Top > SystemParameters.VirtualScreenHeight)
-                _state.Top = 0;
+            viewModel.RequestSaveNoticeEvent += OnRequestSaveNotice;
+            viewModel.RequestSaveLaunchNoticeEvent += OnRequestSaveLaunchNotice;
+            viewModel.RequestCloseWindowEvent += OnRequestCloseWindow;
+        }
 
-            if (_state.Width > 0)
-                this.Width = _state.Width;
+        /// <summary>
+        /// Handles save notice event.
+        /// </summary>
+        private bool isSaveAndLaunchClicked = false; // Add a flag to track Save and Launch click
 
-            if (_state.Height > 0)
-                this.Height = _state.Height;
+        private void OnSaveAndLaunchButtonClick(object sender, EventArgs e)
+        {
+            // Set the flag to true when Save and Launch is clicked
+            isSaveAndLaunchClicked = true;
 
-            if (_state.Left > 0 && _state.Top > 0)
+            // Proceed with save and launch logic here
+        }
+
+        private void OnRequestSaveNotice(object? sender, EventArgs e)
+        {
+            if (!isSaveAndLaunchClicked) // Check the flag before showing the snackbar
             {
-                this.WindowStartupLocation = WindowStartupLocation.Manual;
-                this.Left = _state.Left;
-                this.Top = _state.Top;
+                SettingsSavedSnackbar.Show();
             }
         }
 
-        private async void ShowAlreadyRunningSnackbar()
+        private void OnRequestSaveLaunchNotice(object? sender, EventArgs e)
         {
-            await Task.Delay(500); // wait for everything to finish loading
-            AlreadyRunningSnackbar.Show();
+            if (!isSaveAndLaunchClicked) // Check the flag before showing the snackbar
+            {
+                SettingsSavedLaunchSnackbar.Show();
+            }
         }
 
-        #region INavigationWindow methods
+
+        /// <summary>
+        /// Handles close window event.
+        /// </summary>
+        private async void OnRequestCloseWindow(object? sender, EventArgs e) // Added nullable reference type
+        {
+            await Task.Yield(); // Explicitly await to fix "async method lacks await"
+            Close();
+        }
+
+        /// <summary>
+        /// Restores the window state based on saved settings.
+        /// </summary>
+        private void InitializeWindowState()
+        {
+            // Ensure the window is within screen bounds
+            if (_state.Left > SystemParameters.VirtualScreenWidth) _state.Left = 0;
+            if (_state.Top > SystemParameters.VirtualScreenHeight) _state.Top = 0;
+
+            if (_state.Width > 0) Width = _state.Width;
+            if (_state.Height > 0) Height = _state.Height;
+
+            if (_state.Left > 0 && _state.Top > 0)
+            {
+                WindowStartupLocation = WindowStartupLocation.Manual;
+                Left = _state.Left;
+                Top = _state.Top;
+            }
+        }
+
+        /// <summary>
+        /// Initializes navigation and restores the last selected page.
+        /// </summary>
+        private void InitializeNavigation()
+        {
+            RootNavigation.SelectedPageIndex = App.State.Prop.LastPage;
+            RootNavigation.Navigated += SaveNavigation;
+        }
+
+        /// <summary>
+        /// Saves the last visited navigation page index.
+        /// </summary>
+        private void SaveNavigation(INavigation sender, RoutedNavigationEventArgs e)
+        {
+            App.State.Prop.LastPage = RootNavigation.SelectedPageIndex;
+        }
+
+        /// <summary>
+        /// Displays the "Already Running" snackbar after a brief delay.
+        /// </summary>
+        private async Task ShowAlreadyRunningSnackbar()
+        {
+            await Task.Delay(225).ConfigureAwait(false); // Ensure async execution
+            Dispatcher.Invoke(() => AlreadyRunningSnackbar.Show());
+        }
+
+        #region INavigationWindow Implementation
 
         public Frame GetFrame() => RootFrame;
-
         public INavigation GetNavigation() => RootNavigation;
-
         public bool Navigate(Type pageType) => RootNavigation.Navigate(pageType);
-
         public void SetPageService(IPageService pageService) => RootNavigation.PageService = pageService;
-
         public void ShowWindow() => Show();
-
         public void CloseWindow() => Close();
 
-        #endregion INavigationWindow methods
+        #endregion
 
+        /// <summary>
+        /// Handles window closing, ensuring unsaved changes are confirmed.
+        /// </summary>
         private void WpfUiWindow_Closing(object sender, CancelEventArgs e)
         {
             if (App.FastFlags.Changed || App.PendingSettingTasks.Any())
             {
-                var result = Frontend.ShowMessageBox(Strings.Menu_UnsavedChanges, MessageBoxImage.Warning, MessageBoxButton.YesNo);
+                var result = Frontend.ShowMessageBox(
+                    Strings.Menu_UnsavedChanges,
+                    MessageBoxImage.Warning,
+                    MessageBoxButton.YesNo
+                );
 
                 if (result != MessageBoxResult.Yes)
+                {
                     e.Cancel = true;
+                    return;
+                }
             }
-            
-            _state.Width = this.Width;
-            _state.Height = this.Height;
 
-            _state.Top = this.Top;
-            _state.Left = this.Left;
+            // Save window state
+            SaveWindowState();
+        }
+
+        /// <summary>
+        /// Saves the window state to the application settings.
+        /// </summary>
+        private void SaveWindowState()
+        {
+            _state.Width = Width;
+            _state.Height = Height;
+            _state.Top = Top;
+            _state.Left = Left;
 
             App.State.Save();
         }
 
+        /// <summary>
+        /// Handles post-close logic.
+        /// </summary>
         private void WpfUiWindow_Closed(object sender, EventArgs e)
         {
             if (App.LaunchSettings.TestModeFlag.Active)
@@ -109,5 +188,14 @@ namespace Bloxstrap.UI.Elements.Settings
             else
                 App.SoftTerminate();
         }
+
+        /// <summary>
+        /// Placeholder event handlers.
+        /// </summary>
+        private void NavigationItem_Click(object sender, RoutedEventArgs e) { }
+        private void Button_Click(object sender, RoutedEventArgs e) { }
+        private void NavigationItem_Click_1(object sender, RoutedEventArgs e) { }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e) { }
     }
 }

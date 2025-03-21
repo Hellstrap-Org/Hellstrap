@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Enums
+﻿namespace Hellstrap.Enums
 {
     enum VersionComparison
     {

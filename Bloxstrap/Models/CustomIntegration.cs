@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Models
+﻿namespace Hellstrap.Models
 {
     public class CustomIntegration
     {

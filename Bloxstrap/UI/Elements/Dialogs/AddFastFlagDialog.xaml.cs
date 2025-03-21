@@ -1,8 +1,8 @@
 ﻿using Microsoft.Win32;
 using System.Windows;
-using Bloxstrap.Resources;
+using Hellstrap.Resources;
 
-namespace Bloxstrap.UI.Elements.Dialogs
+namespace Hellstrap.UI.Elements.Dialogs
 {
     /// <summary>
     /// Interaction logic for AddFastFlagDialog.xaml
@@ -20,7 +20,7 @@ namespace Bloxstrap.UI.Elements.Dialogs
         {
             var dialog = new OpenFileDialog
             {
-                Filter = $"{Strings.FileTypes_JSONFiles}|*.json"
+                Filter = $"{Strings.FileTypes_JSONFiles} (*.json;*.txt;*.md)|*.json;*.txt;*.md"
             };
 
             if (dialog.ShowDialog() != true)
@@ -28,6 +28,8 @@ namespace Bloxstrap.UI.Elements.Dialogs
 
             JsonTextBox.Text = File.ReadAllText(dialog.FileName);
         }
+
+
 
         private void OKButton_Click(object sender, RoutedEventArgs e)
         {

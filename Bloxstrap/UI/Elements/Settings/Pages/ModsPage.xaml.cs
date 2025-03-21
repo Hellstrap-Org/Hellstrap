@@ -1,6 +1,6 @@
-﻿using Bloxstrap.UI.ViewModels.Settings;
+﻿using Hellstrap.UI.ViewModels.Settings;
 
-namespace Bloxstrap.UI.Elements.Settings.Pages
+namespace Hellstrap.UI.Elements.Settings.Pages
 {
     /// <summary>
     /// Interaction logic for ModsPage.xaml

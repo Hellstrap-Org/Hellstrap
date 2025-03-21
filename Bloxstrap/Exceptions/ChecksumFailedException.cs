@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Bloxstrap.Exceptions
+namespace Hellstrap.Exceptions
 {
     internal class ChecksumFailedException : Exception
     {

@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Models.Manifest
+﻿namespace Hellstrap.Models.Manifest
 {
     public class ManifestFile
     {

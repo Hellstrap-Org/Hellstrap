@@ -1,84 +1,113 @@
-﻿using Bloxstrap.UI.Elements.Bootstrapper;
+﻿using Hellstrap.UI.Elements.Bootstrapper;  // Ensure this is only included once
 using CommunityToolkit.Mvvm.Input;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using System.IO;
 using System.Windows;
 using System.Windows.Input;
 
-namespace Bloxstrap.UI.ViewModels.Editor
+namespace Hellstrap.UI.ViewModels.Editor
 {
     public class BootstrapperEditorWindowViewModel : NotifyPropertyChangedViewModel
     {
         private CustomDialog? _dialog = null;
 
-        public ICommand PreviewCommand => new RelayCommand(Preview);
-        public ICommand SaveCommand => new RelayCommand(Save);
-        public ICommand OpenThemeFolderCommand => new RelayCommand(OpenThemeFolder);
+        // Commands
+        public ICommand PreviewCommand { get; }
+        public ICommand SaveCommand { get; }
 
-        public Action<bool, string> ThemeSavedCallback { get; set; } = null!;
+        // Properties
+        public string Name { get; set; } = string.Empty;
+        public string Title { get; set; } = "Editing \"CustomTheme\"";
+        public string Code { get; set; } = string.Empty;
 
-        public string Directory { get; set; } = "";
-
-        public string Name { get; set; } = "";
-        public string Title { get; set; } = "Editing \"Custom Theme\"";
-        public string Code { get; set; } = "";
-
-        public bool CodeChanged { get; set; } = false;
-
-        private void Preview()
+        public BootstrapperEditorWindowViewModel()
         {
-            const string LOG_IDENT = "BootstrapperEditorWindowViewModel::Preview";
+            // Initialize commands
+            PreviewCommand = new RelayCommand(Preview);
+            SaveCommand = new RelayCommand(Save);
+        }
 
+        private async void Preview()
+        {
             try
             {
-                CustomDialog dialog = new CustomDialog();
-
+                var dialog = new CustomDialog();
                 dialog.ApplyCustomTheme(Name, Code);
 
-                _dialog?.CloseBootstrapper();
-                _dialog = dialog;
+
+                ClosePreviousDialog();
 
                 dialog.Message = Strings.Bootstrapper_StylePreview_TextCancel;
                 dialog.CancelEnabled = true;
-                dialog.ShowBootstrapper();
+
+                await Task.Run(() => dialog.ShowBootstrapper());
             }
             catch (Exception ex)
             {
-                App.Logger.WriteLine(LOG_IDENT, "Failed to preview custom theme");
-                App.Logger.WriteException(LOG_IDENT, ex);
+                Frontend.ShowMessageBox(
+                    "No Current Theme Added To Preview!",
+                    MessageBoxImage.Warning,
+                    MessageBoxButton.OK
+                );
 
-                Frontend.ShowMessageBox(string.Format(Strings.CustomTheme_Editor_Errors_PreviewFailed, ex.Message), MessageBoxImage.Error, MessageBoxButton.OK);
+                // Log the error/Competeprev lol properly
+                App.Logger.WriteException("Preview method", ex);
             }
         }
 
+
+        // Save the custom theme to a file
         private void Save()
         {
-            const string LOG_IDENT = "BootstrapperEditorWindowViewModel::Save";
-
-            string path = Path.Combine(Directory, "Theme.xml");
+            string themeDirectory = Path.Combine(Paths.CustomThemes, Name);
+            string themeFilePath = Path.Combine(themeDirectory, "Theme.xml");
 
             try
             {
-                File.WriteAllText(path, Code);
-                CodeChanged = false;
-                ThemeSavedCallback.Invoke(true, Strings.CustomTheme_Editor_Save_Success_Description);
+                EnsureDirectoryExists(themeDirectory);
+
+                // Save the code to the file
+                File.WriteAllText(themeFilePath, Code);
+            }
+            catch (IOException ex)
+            {
+                HandleError("BootstrapperEditorWindowViewModel::Save", "Error while writing the theme file", ex);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                HandleError("BootstrapperEditorWindowViewModel::Save", "Insufficient permissions to save the theme", ex);
             }
             catch (Exception ex)
             {
-                App.Logger.WriteLine(LOG_IDENT, "Failed to save custom theme");
-                App.Logger.WriteException(LOG_IDENT, ex);
-
-                //Frontend.ShowMessageBox($"Failed to save theme: {ex.Message}", MessageBoxImage.Error, MessageBoxButton.OK);
-                ThemeSavedCallback.Invoke(false, ex.Message);
+                HandleError("BootstrapperEditorWindowViewModel::Save", "Failed to save custom theme", ex);
             }
         }
 
-        private void OpenThemeFolder()
+        // Helper method to close the previous dialog
+        private void ClosePreviousDialog()
         {
-            Process.Start("explorer.exe", Directory);
+            _dialog?.CloseBootstrapper();
+            _dialog = null;
+        }
+
+        // Helper method to ensure the directory exists
+        private void EnsureDirectoryExists(string directoryPath)
+        {
+            if (!Directory.Exists(directoryPath))
+            {
+                Directory.CreateDirectory(directoryPath);
+            }
+        }
+
+        // Centralized error handling method
+        private void HandleError(string logIdentifier, string message, Exception ex)
+        {
+            // Log error
+            App.Logger.WriteLine(logIdentifier, message);
+            App.Logger.WriteException(logIdentifier, ex);
+
+            // Show error message to the user
+            Frontend.ShowMessageBox($"{message}: {ex.Message}", MessageBoxImage.Error, MessageBoxButton.OK);
         }
     }
 }

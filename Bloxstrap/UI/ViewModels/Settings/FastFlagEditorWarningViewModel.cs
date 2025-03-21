@@ -5,9 +5,9 @@ using System.Windows.Input;
 using CommunityToolkit.Mvvm.Input;
 using Wpf.Ui.Mvvm.Contracts;
 
-using Bloxstrap.UI.Elements.Settings.Pages;
+using Hellstrap.UI.Elements.Settings.Pages;
 
-namespace Bloxstrap.UI.ViewModels.Settings
+namespace Hellstrap.UI.ViewModels.Settings
 {
     internal class FastFlagEditorWarningViewModel : NotifyPropertyChangedViewModel
     {
@@ -17,7 +17,7 @@ namespace Bloxstrap.UI.ViewModels.Settings
 
         public string ContinueButtonText { get; set; } = "";
 
-        public bool CanContinue { get; set; } = false;
+        public bool CanContinue { get; set; } = true;
 
         public ICommand GoBackCommand => new RelayCommand(GoBack);
 
@@ -73,8 +73,6 @@ namespace Bloxstrap.UI.ViewModels.Settings
         {
             if (!CanContinue)
                 return;
-
-            App.State.Prop.ShowFFlagEditorWarning = false;
             App.State.Save(); // should we be force saving here?
 
             if (Window.GetWindow(_page) is INavigationWindow window)

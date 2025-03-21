@@ -1,17 +1,18 @@
-﻿namespace Bloxstrap.RobloxInterfaces
+﻿using Hellstrap.RobloxInterfaces;
+using Hellstrap;
+
+namespace Hellstrap.RobloxInterfaces
 {
     public static class Deployment
     {
         public const string DefaultChannel = "production";
-        
-        private const string VersionStudioHash = "version-012732894899482c";
 
         public static string Channel = DefaultChannel;
 
         public static string BinaryType = "WindowsPlayer";
 
         public static bool IsDefaultChannel => Channel.Equals(DefaultChannel, StringComparison.OrdinalIgnoreCase);
-        
+
         public static string BaseUrl { get; private set; } = null!;
 
         public static readonly List<HttpStatusCode?> BadChannelCodes = new()
@@ -49,11 +50,9 @@
                 response.EnsureSuccessStatusCode();
 
                 // versionStudio is the version hash for the last MFC studio to be deployed.
-                // the response body should always be "version-012732894899482c".
                 string content = await response.Content.ReadAsStringAsync(token);
 
-                if (content != VersionStudioHash)
-                    throw new InvalidHTTPResponseException($"versionStudio response does not match (expected \"{VersionStudioHash}\", got \"{content}\")");
+
             }
             catch (TaskCanceledException)
             {
@@ -166,7 +165,7 @@
                 {
                     clientVersion = await Http.GetJson<ClientVersion>("https://clientsettingscdn.roblox.com" + path);
                 }
-                catch (HttpRequestException httpEx) 
+                catch (HttpRequestException httpEx)
                 when (!isDefaultChannel && BadChannelCodes.Contains(httpEx.StatusCode))
                 {
                     throw new InvalidChannelException(httpEx.StatusCode);
@@ -185,6 +184,15 @@
                     {
                         throw new InvalidChannelException(httpEx.StatusCode);
                     }
+                }
+
+                // check if channel is behind LIVE
+                if (!isDefaultChannel)
+                {
+                    var defaultClientVersion = await GetInfo(DefaultChannel);
+
+                    if (Utilities.CompareVersions(clientVersion.Version, defaultClientVersion.Version) == VersionComparison.LessThan)
+                        clientVersion.IsBehindDefaultChannel = true;
                 }
 
                 ClientVersionCache[cacheKey] = clientVersion;

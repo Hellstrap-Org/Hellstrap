@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Extensions
+﻿namespace Hellstrap.Extensions
 {
     static class ServerTypeEx
     {
@@ -7,7 +7,7 @@
             ServerType.Public => Strings.Enums_ServerType_Public,
             ServerType.Private => Strings.Enums_ServerType_Private,
             ServerType.Reserved => Strings.Enums_ServerType_Reserved,
-            _ => "?"
+            _ => "No Server Type Detected?"
         };
     }
 }

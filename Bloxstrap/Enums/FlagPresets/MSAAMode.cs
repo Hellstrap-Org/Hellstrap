@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Enums.FlagPresets
+﻿namespace Hellstrap.Enums.FlagPresets
 {
     public enum MSAAMode
     {
@@ -8,7 +8,11 @@
         x1,
         [EnumName(StaticName = "2x")]
         x2,
+        [EnumName(StaticName = "3x")]
+        x3,
         [EnumName(StaticName = "4x")]
-        x4
+        x4,
+        [EnumName(StaticName = "8x")]
+        x8
     }
 }

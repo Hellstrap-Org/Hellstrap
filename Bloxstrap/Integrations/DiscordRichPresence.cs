@@ -1,8 +1,8 @@
 using System.Windows;
-using Bloxstrap.Models.RobloxApi;
+using Hellstrap.Models.RobloxApi;
 using DiscordRPC;
 
-namespace Bloxstrap.Integrations
+namespace Hellstrap.Integrations
 {
     public class DiscordRichPresence : IDisposable
     {
@@ -69,11 +69,11 @@ namespace Bloxstrap.Integrations
             }
             else if (message.Command == "SetRichPresence")
             {
-                Models.BloxstrapRPC.RichPresence? presenceData;
+                Models.HellstrapRPC.RichPresence? presenceData;
 
                 try
                 {
-                    presenceData = message.Data.Deserialize<Models.BloxstrapRPC.RichPresence>();
+                    presenceData = message.Data.Deserialize<Models.HellstrapRPC.RichPresence>();
                 }
                 catch (Exception)
                 {
@@ -268,7 +268,7 @@ namespace Bloxstrap.Integrations
                 }
             };
 
-            // this is used for configuration from BloxstrapRPC
+            // this is used for configuration from HellstrapRPC
             _originalPresence = _currentPresence.Clone();
 
             if (_messageQueue.Any())
@@ -309,7 +309,7 @@ namespace Bloxstrap.Integrations
 
             buttons.Add(new Button
             {
-                Label = "See game page",
+                Label = "See Game Page",
                 Url = $"https://www.roblox.com/games/{data.PlaceId}"
             });
 

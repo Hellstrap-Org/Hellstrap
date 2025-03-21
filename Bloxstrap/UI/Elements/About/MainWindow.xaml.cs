@@ -2,7 +2,7 @@
 using Wpf.Ui.Controls.Interfaces;
 using Wpf.Ui.Mvvm.Contracts;
 
-namespace Bloxstrap.UI.Elements.About
+namespace Hellstrap.UI.Elements.About
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
@@ -34,5 +34,10 @@ namespace Bloxstrap.UI.Elements.About
         public void CloseWindow() => Close();
 
         #endregion INavigationWindow methods
+
+        private void RootFrame_Navigated(object sender, System.Windows.Navigation.NavigationEventArgs e)
+        {
+
+        }
     }
 }

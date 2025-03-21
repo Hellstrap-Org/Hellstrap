@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap
+﻿namespace Hellstrap
 {
     public static class GlobalCache
     {

@@ -1,14 +1,16 @@
-﻿namespace Bloxstrap.Enums
+﻿namespace Hellstrap.Enums
 {
     public enum BootstrapperIcon
     {
-        [EnumName(StaticName = "Bloxstrap")]
-        IconBloxstrap,
+        [EnumName(StaticName = "Hellstrap")]
+        IconHellstrap,
         [EnumName(StaticName = "2008")]
         Icon2008,
         [EnumName(StaticName = "2011")]
         Icon2011,
+        [EnumName(StaticName = "Early 2015")]
         IconEarly2015,
+        [EnumName(StaticName = "Late 2015")]
         IconLate2015,
         [EnumName(StaticName = "2017")]
         Icon2017,
@@ -18,7 +20,7 @@
         Icon2022,
         [EnumName(FromTranslation = "Common.Custom")]
         IconCustom,
-        [EnumName(FromTranslation = "Enums.BootstrapperStyle.ClassicFluentDialog")]
-        IconBloxstrapClassic
+        [EnumName(StaticName = "Hellstrap (Classic)")]
+        IconHellstrapClassic
     }
 }

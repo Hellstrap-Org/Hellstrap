@@ -1,7 +1,10 @@
-﻿using Bloxstrap.AppData;
+﻿using Hellstrap.AppData;
+using Hellstrap;
 using System.ComponentModel;
+using System.Security.AccessControl;
+using System.Windows;
 
-namespace Bloxstrap
+namespace Hellstrap
 {
     static class Utilities
     {
@@ -9,10 +12,10 @@ namespace Bloxstrap
         {
             try
             {
-                Process.Start(new ProcessStartInfo 
-                { 
-                    FileName = website, 
-                    UseShellExecute = true 
+                Process.Start(new ProcessStartInfo
+                {
+                    FileName = website,
+                    UseShellExecute = true
                 });
             }
             catch (Win32Exception ex)
@@ -65,7 +68,7 @@ namespace Bloxstrap
             catch (Exception)
             {
                 // temporary diagnostic log for the issue described here:
-                // https://github.com/bloxstraplabs/bloxstrap/issues/3193
+                // https://github.com/Hellstraplabs/Hellstrap/issues/3193
                 // the problem is that this happens only on upgrade, so my only hope of catching this is bug reports following the next release
 
                 App.Logger.WriteLine("Utilities::CompareVersions", "An exception occurred when comparing versions");
@@ -75,24 +78,10 @@ namespace Bloxstrap
             }
         }
 
-        /// <summary>
-        /// Parses the input version string and prints if fails
-        /// </summary>
-        public static Version? ParseVersionSafe(string versionStr)
+        public static string GetRobloxVersion(bool studio)
         {
-            const string LOG_IDENT = "Utilities::ParseVersionSafe";
+            IAppData data = studio ? new RobloxStudioData() : new RobloxPlayerData();
 
-            if (!Version.TryParse(versionStr, out Version? version))
-            {
-                App.Logger.WriteLine(LOG_IDENT, $"Failed to convert {versionStr} to a valid Version type.");
-                return version;
-            }
-
-            return version;
-        }
-
-        public static string GetRobloxVersionStr(IAppData data)
-        {
             string playerLocation = data.ExecutablePath;
 
             if (!File.Exists(playerLocation))
@@ -104,19 +93,6 @@ namespace Bloxstrap
                 return "";
 
             return versionInfo.ProductVersion.Replace(", ", ".");
-        }
-
-        public static string GetRobloxVersionStr(bool studio)
-        {
-            IAppData data = studio ? new RobloxStudioData() : new RobloxPlayerData();
-
-            return GetRobloxVersionStr(data);
-        }
-
-        public static Version? GetRobloxVersion(IAppData data)
-        {
-            string str = GetRobloxVersionStr(data);
-            return ParseVersionSafe(str);
         }
 
         public static Process[] GetProcessesSafe()
@@ -135,23 +111,73 @@ namespace Bloxstrap
             }
         }
 
-        public static bool DoesMutexExist(string name)
+
+        public static void RemoveTeleportFix()
         {
+            const string LOG_IDENT = "Utilities::RemoveTeleportFix";
+
+            string user = Environment.UserDomainName + "\\" + Environment.UserName;
+
             try
             {
-                Mutex.OpenExisting(name).Close();
-                return true;
+                FileInfo fileInfo = new FileInfo(App.RobloxCookiesFilePath);
+                FileSecurity fileSecurity = fileInfo.GetAccessControl();
+
+                fileSecurity.RemoveAccessRule(new FileSystemAccessRule(user, FileSystemRights.Read, AccessControlType.Deny));
+                fileSecurity.RemoveAccessRule(new FileSystemAccessRule(user, FileSystemRights.Write, AccessControlType.Allow));
+
+                fileInfo.SetAccessControl(fileSecurity);
+
+                App.Logger.WriteLine(LOG_IDENT, "Successfully removed teleport fix.");
             }
-            catch
+            catch (Exception ex)
             {
-                return false;
+                Frontend.ShowExceptionDialog(ex);
             }
         }
 
-        public static void KillBackgroundUpdater()
+        public static void ApplyTeleportFix()
         {
-            using EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.AutoReset, "Bloxstrap-BackgroundUpdaterKillEvent");
-            handle.Set();
+            const string LOG_IDENT = "Utilities::ApplyTeleportFix";
+
+            string user = Environment.UserDomainName + "\\" + Environment.UserName;
+
+            if (File.Exists(App.RobloxCookiesFilePath))
+            {
+                if (App.Settings.Prop.FixTeleports)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Attempting to apply teleport fix...");
+
+                    try
+                    {
+                        FileInfo fileInfo = new FileInfo(App.RobloxCookiesFilePath);
+                        FileSecurity fileSecurity = fileInfo.GetAccessControl();
+
+                        fileSecurity.AddAccessRule(new FileSystemAccessRule(user, FileSystemRights.Read, AccessControlType.Deny));
+                        fileSecurity.AddAccessRule(new FileSystemAccessRule(user, FileSystemRights.Write, AccessControlType.Allow));
+
+                        fileInfo.SetAccessControl(fileSecurity);
+
+                        App.Logger.WriteLine(LOG_IDENT, "Successfully made RobloxCookies.dat write-only.");
+                    }
+                    catch (Exception ex)
+                    {
+                        App.Logger.WriteLine(LOG_IDENT, "Failed to make RobloxCookies.dat write-only.");
+                        App.Logger.WriteException(LOG_IDENT, ex);
+                        Frontend.ShowExceptionDialog(ex);
+                    }
+                }
+                else
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "Removing teleport fix...");
+                    RemoveTeleportFix();
+                }
+            }
+            else
+            {
+                App.Logger.WriteLine(LOG_IDENT, $"Failed to find RobloxCookies.dat");
+                Frontend.ShowMessageBox($"Failed to find RobloxCookies.dat | Path: {App.RobloxCookiesFilePath}", MessageBoxImage.Error);
+            }
         }
     }
 }

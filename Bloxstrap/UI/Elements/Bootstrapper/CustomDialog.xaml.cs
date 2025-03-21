@@ -1,10 +1,13 @@
-﻿using Bloxstrap.UI.Elements.Bootstrapper.Base;
-using Bloxstrap.UI.ViewModels.Bootstrapper;
+﻿using Hellstrap.UI.Elements.Bootstrapper.Base;
+using Hellstrap.UI.ViewModels.Bootstrapper;
+using Hellstrap;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using System.Windows.Shell;
+using System.Windows.Threading;
 
-namespace Bloxstrap.UI.Elements.Bootstrapper
+namespace Hellstrap.UI.Elements.Bootstrapper
 {
     /// <summary>
     /// Interaction logic for CustomDialog.xaml
@@ -13,7 +16,7 @@ namespace Bloxstrap.UI.Elements.Bootstrapper
     {
         private readonly BootstrapperDialogViewModel _viewModel;
 
-        public Bloxstrap.Bootstrapper? Bootstrapper { get; set; }
+        public Hellstrap.Bootstrapper? Bootstrapper { get; set; }
 
         private bool _isClosing;
 

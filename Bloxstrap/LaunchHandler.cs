@@ -3,10 +3,10 @@
 using Windows.Win32;
 using Windows.Win32.Foundation;
 
-using Bloxstrap.UI.Elements.Dialogs;
-using Bloxstrap.Enums;
+using Hellstrap.UI.Elements.Dialogs;
+using Hellstrap;
 
-namespace Bloxstrap
+namespace Hellstrap
 {
     public static class LaunchHandler
     {
@@ -59,20 +59,15 @@ namespace Bloxstrap
                 App.Logger.WriteLine(LOG_IDENT, "Opening watcher");
                 LaunchWatcher();
             }
-            else if (App.LaunchSettings.MultiInstanceWatcherFlag.Active)
-            {
-                App.Logger.WriteLine(LOG_IDENT, "Opening multi-instance watcher");
-                LaunchMultiInstanceWatcher();
-            }
-            else if (App.LaunchSettings.BackgroundUpdaterFlag.Active)
-            {
-                App.Logger.WriteLine(LOG_IDENT, "Opening background updater");
-                LaunchBackgroundUpdater();
-            }
             else if (App.LaunchSettings.RobloxLaunchMode != LaunchMode.None)
             {
                 App.Logger.WriteLine(LOG_IDENT, $"Opening bootstrapper ({App.LaunchSettings.RobloxLaunchMode})");
                 LaunchRoblox(App.LaunchSettings.RobloxLaunchMode);
+            }
+            else if (App.LaunchSettings.BloxshadeFlag.Active)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Opening Bloxshade");
+                LaunchBloxshadeConfig();
             }
             else if (!App.LaunchSettings.QuietFlag.Active)
             {
@@ -120,7 +115,7 @@ namespace Bloxstrap
             else
             {
 #if QA_BUILD
-                Frontend.ShowMessageBox("You are about to install a QA build of Bloxstrap. The red window border indicates that this is a QA build.\n\nQA builds are handled completely separately of your standard installation, like a virtual environment.", MessageBoxImage.Information);
+                Frontend.ShowMessageBox("You are about to install a QA build of Hellstrap. The red window border indicates that this is a QA build.\n\nQA builds are handled completely separately of your standard installation, like a virtual environment.", MessageBoxImage.Information);
 #endif
 
                 new LanguageSelectorDialog().ShowDialog();
@@ -215,6 +210,8 @@ namespace Bloxstrap
         {
             const string LOG_IDENT = "LaunchHandler::LaunchRoblox";
 
+            const string MutexName = "ROBLOX_singletonMutex";
+
             if (launchMode == LaunchMode.None)
                 throw new InvalidOperationException("No Roblox launch mode set");
 
@@ -256,6 +253,29 @@ namespace Bloxstrap
                 dialog.Bootstrapper = App.Bootstrapper;
             }
 
+            Mutex? singletonMutex = null;
+
+            if (App.Settings.Prop.MultiInstanceLaunching)
+            {
+                App.Logger.WriteLine(LOG_IDENT, "Attempting to create singleton mutex...");
+                try
+                {
+                    Mutex.OpenExisting("ROBLOX_singletonMutex");
+                    App.Logger.WriteLine(LOG_IDENT, "Singleton mutex already exists.");
+                }
+                catch
+                {
+                    // create the singleton mutex before the game client does
+                    singletonMutex = new Mutex(true, "ROBLOX_singletonMutex");
+                    App.Logger.WriteLine(LOG_IDENT, "Created singleton mutex.");
+                }
+            }
+
+            // only applying the fix after game join allows the user to open the desktop app before joining any game
+            if (!App.Settings.Prop.EnableActivityTracking)
+            {
+                Utilities.ApplyTeleportFix();
+            }
             Task.Run(App.Bootstrapper.Run).ContinueWith(t =>
             {
                 App.Logger.WriteLine(LOG_IDENT, "Bootstrapper task has finished");
@@ -266,6 +286,22 @@ namespace Bloxstrap
 
                     if (t.Exception is not null)
                         App.FinalizeExceptionHandling(t.Exception);
+                }
+                else if (singletonMutex is not null)
+                {
+                    App.Logger.WriteLine(LOG_IDENT, "We have singleton mutex ownership! Running in background until all Roblox processes are closed");
+
+                    // we've got ownership of the roblox singleton mutex!
+                    // if we stop running, everything will screw up once any more roblox instances launched
+                    while (Process.GetProcessesByName("RobloxPlayerBeta").Any())
+                    {
+                        Thread.Sleep(920);
+                    };
+
+                    App.Logger.WriteLine(LOG_IDENT, "All Roblox processes closed!");
+
+                    if (File.Exists(App.RobloxCookiesFilePath))
+                        Utilities.RemoveTeleportFix();
                 }
 
                 App.Terminate();
@@ -289,7 +325,7 @@ namespace Bloxstrap
 
             var watcher = new Watcher();
 
-            Task.Run(watcher.Run).ContinueWith(t => 
+            Task.Run(watcher.Run).ContinueWith(t =>
             {
                 App.Logger.WriteLine(LOG_IDENT, "Watcher task has finished");
 
@@ -307,72 +343,21 @@ namespace Bloxstrap
             });
         }
 
-        public static void LaunchMultiInstanceWatcher()
+        public static void LaunchBloxshadeConfig()
         {
-            const string LOG_IDENT = "LaunchHandler::LaunchMultiInstanceWatcher";
+            const string LOG_IDENT = "LaunchHandler::LaunchBloxshade";
 
-            App.Logger.WriteLine(LOG_IDENT, "Starting multi-instance watcher");
+            // ansel setting
+            //App.Settings.Prop.RenameClientToEuroTrucks2 = true;
+            //App.Settings.Save();
 
-            Task.Run(MultiInstanceWatcher.Run).ContinueWith(t =>
-            {
-                App.Logger.WriteLine(LOG_IDENT, "Multi instance watcher task has finished");
+            //App.State.Prop.ShowBloxshadeWarning = true;
+            //App.State.Save();
 
-                if (t.IsFaulted)
-                {
-                    App.Logger.WriteLine(LOG_IDENT, "An exception occurred when running the multi-instance watcher");
+            App.Logger.WriteLine(LOG_IDENT, "Showing unsupported warning");
 
-                    if (t.Exception is not null)
-                        App.FinalizeExceptionHandling(t.Exception);
-                }
-
-                App.Terminate();
-            });
-        }
-
-        public static void LaunchBackgroundUpdater()
-        {
-            const string LOG_IDENT = "LaunchHandler::LaunchBackgroundUpdater";
-
-            // Activate some LaunchFlags we need
-            App.LaunchSettings.QuietFlag.Active = true;
-            App.LaunchSettings.NoLaunchFlag.Active = true;
-
-            App.Logger.WriteLine(LOG_IDENT, "Initializing bootstrapper");
-            App.Bootstrapper = new Bootstrapper(LaunchMode.Player)
-            {
-                MutexName = "Bloxstrap-BackgroundUpdater",
-                QuitIfMutexExists = true
-            };
-
-            CancellationTokenSource cts = new CancellationTokenSource();
-
-            Task.Run(() =>
-            {
-                App.Logger.WriteLine(LOG_IDENT, "Started event waiter");
-                using (EventWaitHandle handle = new EventWaitHandle(false, EventResetMode.AutoReset, "Bloxstrap-BackgroundUpdaterKillEvent"))
-                    handle.WaitOne();
-
-                App.Logger.WriteLine(LOG_IDENT, "Received close event, killing it all!");
-                App.Bootstrapper.Cancel();
-            }, cts.Token);
-
-            Task.Run(App.Bootstrapper.Run).ContinueWith(t =>
-            {
-                App.Logger.WriteLine(LOG_IDENT, "Bootstrapper task has finished");
-                cts.Cancel(); // stop event waiter
-
-                if (t.IsFaulted)
-                {
-                    App.Logger.WriteLine(LOG_IDENT, "An exception occurred when running the bootstrapper");
-
-                    if (t.Exception is not null)
-                        App.FinalizeExceptionHandling(t.Exception);
-                }
-
-                App.Terminate();
-            });
-
-            App.Logger.WriteLine(LOG_IDENT, "Exiting");
+            new BloxshadeDialog().ShowDialog();
+            App.SoftTerminate();
         }
     }
 }

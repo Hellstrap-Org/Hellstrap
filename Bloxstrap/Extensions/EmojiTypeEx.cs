@@ -1,4 +1,4 @@
-﻿namespace Bloxstrap.Extensions
+﻿namespace Hellstrap.Extensions
 {
     static class EmojiTypeEx
     {
@@ -25,7 +25,7 @@
             if (emojiType == EmojiType.Default)
                 return "";
 
-            return $"https://github.com/bloxstraplabs/rbxcustom-fontemojis/releases/download/my-phone-is-78-percent/{Filenames[emojiType]}";
+            return $"https://github.com/Hellstraplabs/rbxcustom-fontemojis/releases/download/my-phone-is-78-percent/{Filenames[emojiType]}";
         }
     }
 }

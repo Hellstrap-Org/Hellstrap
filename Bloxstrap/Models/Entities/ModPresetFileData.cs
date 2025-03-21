@@ -1,13 +1,13 @@
 ﻿using System.Security.Cryptography;
 using System.Windows.Markup;
 
-namespace Bloxstrap.Models.Entities
+namespace Hellstrap.Models.Entities
 {
     public class ModPresetFileData
     {
         public string FilePath { get; private set; }
 
-        public string FullFilePath => Path.Combine(Paths.Modifications, FilePath);
+        public string FullFilePath => Path.Combine(Paths.Mods, FilePath);
 
         public FileStream FileStream => File.OpenRead(FullFilePath);
 
